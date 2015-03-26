@@ -46,7 +46,7 @@ public class PerishablePunchersMain
 	private int gameState = 1;
 	private long oldTime = 0, newTime = 0, dTime;
 	private String gfxType;
-	private boolean beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playSoundOnce, playSound2Once, p1CanHit = true, p2CanHit = true;
+	private boolean beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, p1CanHit = true, p2CanHit = true;
 	private Texture backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull,
 			player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40,
 			player2Health25, player2Health10, player2HealthFin, player2Health0, player1Kombo1, player2Kombo1, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD;
@@ -240,6 +240,22 @@ public class PerishablePunchersMain
 				combo1Arrow();
 			}
 
+			if (Keyboard.getEventKey() == Keyboard.KEY_G)
+			{
+				if (Keyboard.getEventKeyState())
+				{
+				} else
+				{
+					if (gfxType.equals("HD"))
+					{
+						gfxType = "8Bit";
+					} else if (gfxType.equals("8Bit"))
+					{
+						gfxType = "HD";
+					}
+				}
+			}
+
 			if (Keyboard.getEventKey() == Keyboard.KEY_W && p1CanHit)
 			{
 				p1.draw(player1);
@@ -363,6 +379,21 @@ public class PerishablePunchersMain
 				combo1WASD();
 				combo1Arrow();
 			}
+			if (Keyboard.getEventKey() == Keyboard.KEY_G)
+			{
+				if (Keyboard.getEventKeyState())
+				{
+				} else
+				{
+					if (gfxType.equals("HD"))
+					{
+						gfxType = "8Bit";
+					} else if (gfxType.equals("8Bit"))
+					{
+						gfxType = "HD";
+					}
+				}
+			}
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_W && p1CanHit)
 			{
@@ -443,19 +474,11 @@ public class PerishablePunchersMain
 			{
 				if (p1.getY() - 0 <= HEIGHT - 400)// arbitrary
 				{
-					if (colliding())
+					if (colliding() && playSound3Once)
 					{
 						System.out.println("FINISHING MOVE");
 						Sound.play("res/Sounds/TeaBag.wav");
-						
-						try
-						{
-							Thread.sleep(2000);
-						} catch (InterruptedException e)
-						{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						playSound3Once = false;
 					}
 				}
 
@@ -468,16 +491,18 @@ public class PerishablePunchersMain
 
 	public void finishingMoveArrow()
 	{
-		if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p1CanHit)
+		if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p2CanHit)
 		{
 			if (Keyboard.getEventKeyState())
 			{
 				if (p2.getY() - 0 <= HEIGHT - 400)// arbitrary
 				{
-					if (colliding() && oneToFinish)
+					if (colliding() && playSound3Once) // need to make &&
+														// oneToFinish work
 					{
 						System.out.println("FINISHING MOVE");
 						Sound.play("res/Sounds/TeaBag.wav");
+						playSound3Once = false;
 					}
 				}
 
@@ -608,16 +633,16 @@ public class PerishablePunchersMain
 			p2CanHit = true;
 		}
 
-		
+		// graphics settings
 		if (gfxType.equals("8Bit"))
 		{
-			pollInput();// gets input from keyboard and mouse
+			pollInput();
 		} else if (gfxType.equals("HD"))
 		{
 			pollInputHD();
 		}
 
-		// check health
+		// P1 FINISH
 		if (p1.getHealth() < 6 && p1.getHealth() > 0)
 		{
 			oneToFinish = true;
@@ -628,25 +653,22 @@ public class PerishablePunchersMain
 				Sound.play("res/Sounds/FinishIt.wav");
 				playSoundOnce = false;
 			}
-
+			// P1 DIED
 		} else if (p1.getHealth() < 1)
 		{
 			oneToFinish = false;
 			oneDied = true;
 			renderItDied();
-			if (playSound2Once)
-			{
-				Sound.play("res/Sounds/ItDied.wav");
-				playSound2Once = false;
-			}
+
 			renderTex(restart, WIDTH / 2 - 256, 256);
+			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 				reset();
 		} else
 		{
 			oneToFinish = false;
 		}
-
+		// P2 FINISH
 		if (p2.getHealth() < 6 && p2.getHealth() > 0)
 		{
 			oneToFinish2 = true;
@@ -657,18 +679,15 @@ public class PerishablePunchersMain
 				Sound.play("res/Sounds/FinishIt.wav");
 				playSoundOnce = false;
 			}
-
+			// P2 DIED
 		} else if (p2.getHealth() < 1)
 		{
 			oneToFinish2 = false;
 			oneDied = true;
 			renderItDied();
-			if (playSound2Once)
-			{
-				Sound.play("res/Sounds/ItDied.wav");
-				playSound2Once = false;
-			}
+
 			renderTex(restart, WIDTH / 2 - 256, 256);
+			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 				reset();
 
@@ -817,6 +836,8 @@ public class PerishablePunchersMain
 		oneDied = false;
 		playSoundOnce = true;
 		playSound2Once = true;
+		playSound3Once = true;
+		playDieSound = false;
 	}
 
 	public void start()
@@ -854,6 +875,7 @@ public class PerishablePunchersMain
 			Display.setTitle("Loading...");
 			Display.setInitialBackground(0, 0, 0);
 			Display.setVSyncEnabled(true);
+
 			Display.create();
 		} catch (LWJGLException e)
 		{
@@ -872,7 +894,9 @@ public class PerishablePunchersMain
 		oneToFinish = false;
 		playSoundOnce = true;
 		playSound2Once = true;
+		playSound3Once = true;
 		beggining = true;
+		playDieSound = false;
 		// end init vars
 
 	}
@@ -1021,6 +1045,20 @@ public class PerishablePunchersMain
 				{
 					e.printStackTrace();
 				}
+				if (playSound2Once && playDieSound)
+				{
+					try
+					{
+						Thread.sleep(1500);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					Sound.play("res/Sounds/ItDied.wav");
+					playSound2Once = false;
+					playDieSound = false;
+				}
+
 			}
 		}
 	};
