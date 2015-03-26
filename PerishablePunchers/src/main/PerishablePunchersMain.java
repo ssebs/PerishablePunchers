@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
@@ -51,7 +52,7 @@ public class PerishablePunchersMain
 			player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40,
 			player2Health25, player2Health10, player2HealthFin, player2Health0, player1Kombo1, player2Kombo1, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD;
 
-	// TODO MAKE TEABAGGING FINISHING MOVE, JUMP AND HIT SHOULD TRIGGER IT
+	// TODO PUT EACH OF THE SOUNDS IN A NEW THREAD
 
 	public void renderFinishIt()
 
@@ -287,14 +288,17 @@ public class PerishablePunchersMain
 				{
 				} else
 				{
+					// System.out.println("Colliding: " + colliding());
 					if (colliding())
 					{
-
 						p1.setHealth(p1.getHealth() - 5);
-						Sound.play("res/Sounds/Punch.wav");
+						 Sound.play("res/Sounds/Punch.wav");
+						// m_punch.play();
 					} else
 					{
 						Sound.play("res/Sounds/Whoosh.wav");
+						// System.out.println("Should play sound");
+						// m_whoosh.play();
 					}
 
 				}
@@ -307,13 +311,17 @@ public class PerishablePunchersMain
 				{
 				} else
 				{
+					// System.out.println("Colliding: " + colliding());
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						Sound.play("res/Sounds/Punch.wav");
+						 Sound.play("res/Sounds/Punch.wav");
+						// m_punch.play();
 					} else
 					{
 						Sound.play("res/Sounds/Whoosh.wav");
+						// System.out.println("Should play sound");
+						// m_whoosh.play();
 					}
 				}
 			}
@@ -431,9 +439,11 @@ public class PerishablePunchersMain
 
 						p1.setHealth(p1.getHealth() - 5);
 						Sound.play("res/Sounds/Punch.wav");
+						// m_punch.play();
 					} else
 					{
 						Sound.play("res/Sounds/Whoosh.wav");
+						// m_whoosh.play();
 					}
 
 				}
@@ -450,9 +460,11 @@ public class PerishablePunchersMain
 					{
 						p2.setHealth(p2.getHealth() - 5);
 						Sound.play("res/Sounds/Punch.wav");
+						// m_punch.play();
 					} else
 					{
 						Sound.play("res/Sounds/Whoosh.wav");
+						// m_whoosh.play();
 					}
 				}
 			}
@@ -478,6 +490,7 @@ public class PerishablePunchersMain
 					{
 						System.out.println("FINISHING MOVE");
 						Sound.play("res/Sounds/TeaBag.wav");
+						// m_teaBag.play();
 						playSound3Once = false;
 					}
 				}
@@ -502,6 +515,7 @@ public class PerishablePunchersMain
 					{
 						System.out.println("FINISHING MOVE");
 						Sound.play("res/Sounds/TeaBag.wav");
+						// m_teaBag.play();
 						playSound3Once = false;
 					}
 				}
@@ -547,6 +561,7 @@ public class PerishablePunchersMain
 					p2.setHealth(p2.getHealth() - 5);
 					p1.draw(player1Kombo1);
 					Sound.play("res/Sounds/Kombo.wav");
+					// m_kombo.play();
 					dTime = 0;
 				} else
 				{
@@ -590,6 +605,7 @@ public class PerishablePunchersMain
 					p1.setHealth(p1.getHealth() - 5);
 					p2.draw(player2Kombo1);
 					Sound.play("res/Sounds/Kombo.wav");
+					// m_kombo.play();
 					dTime = 0;
 				} else
 				{
@@ -651,6 +667,7 @@ public class PerishablePunchersMain
 			if (playSoundOnce)
 			{
 				Sound.play("res/Sounds/FinishIt.wav");
+				// m_finishIt.play();
 				playSoundOnce = false;
 			}
 			// P1 DIED
@@ -677,6 +694,7 @@ public class PerishablePunchersMain
 			if (playSoundOnce)
 			{
 				Sound.play("res/Sounds/FinishIt.wav");
+				// m_finishIt.play();
 				playSoundOnce = false;
 			}
 			// P2 DIED
@@ -753,6 +771,11 @@ public class PerishablePunchersMain
 		}
 	}
 
+	public void playSound(String fileName)
+	{
+
+	}
+
 	public void play()
 	{
 		paused = false;
@@ -775,6 +798,7 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfx8Bit, 0, 0);
 					gfxType = "8Bit";
+					Sound.play("res/Sounds/Gong.wav");
 					Display.update();
 					try
 					{
@@ -794,6 +818,7 @@ public class PerishablePunchersMain
 					// System.out.println("QUIT BUTTON CLICKED");
 					renderTex(gfxHD, 0, 0);
 					gfxType = "HD";
+					Sound.play("res/Sounds/Gong.wav");
 					Display.update();
 					try
 					{
@@ -863,6 +888,7 @@ public class PerishablePunchersMain
 			gameStates();
 			Display.update();// updates screen
 		}
+		AL.destroy();
 		Display.destroy();
 		close = true;
 	}
@@ -875,7 +901,6 @@ public class PerishablePunchersMain
 			Display.setTitle("Loading...");
 			Display.setInitialBackground(0, 0, 0);
 			Display.setVSyncEnabled(true);
-
 			Display.create();
 		} catch (LWJGLException e)
 		{
@@ -897,6 +922,19 @@ public class PerishablePunchersMain
 		playSound3Once = true;
 		beggining = true;
 		playDieSound = false;
+
+		// try
+		// {
+		// //m_finishIt = new Music("res/Sounds/FinishIt.ogg");
+		// //m_itDied = new Music("res/Sounds/ItDied.ogg");
+		// //m_kombo = new Music("res/Sounds/Kombo.ogg");
+		// //m_punch = new Music("res/Sounds/Punch.ogg");
+		// //m_teaBag = new Music("res/Sounds/TeaBag.ogg");
+		// //m_whoosh = new Music("res/Sounds/Whoosh.ogg");
+		// } catch (SlickException e)
+		// {
+		// e.printStackTrace();
+		// }
 		// end init vars
 
 	}
@@ -1055,6 +1093,7 @@ public class PerishablePunchersMain
 						e.printStackTrace();
 					}
 					Sound.play("res/Sounds/ItDied.wav");
+					// //m_itDied.play();
 					playSound2Once = false;
 					playDieSound = false;
 				}

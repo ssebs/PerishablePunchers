@@ -118,6 +118,7 @@ public class Player
 					}
 				}
 				Sound.play("res/Sounds/Jump.wav");
+				//m.play();
 			}
 		}
 	}
