@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -45,18 +44,16 @@ public class PerishablePunchersMain
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
-	private int gameState = 1, player1Tex, player2Tex, clickCount;
+	private int gameState = 1, player1Tex, player2Tex, clickCount, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0;
 	private long oldTime = 0, newTime = 0, dTime;
 	private String gfxType;
-	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, p1CanHit = true,
-			p2CanHit = true;
-	private Texture charPick, backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch,
-			player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55,
-			player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk,
-			player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD;
+	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
+	private boolean p1CanFireBall = true, p2CanFireBall = true, p1CanHit = true, p2CanHit = true, renderFireBallP1 = false, renderFireBallP2 = false, notDoneP1 = false, notDoneP2 = false, playHaduken1Once = true, playHaduken2Once = true;
 
-	// TODO ADD REST OF PLAYERS, NEED TO MAKE NEW POLLINPUTS FOR THEM, USE
-	// "players" VARIABLE TO CHOOSE IT ON A CHOOSE SCREEN
+	private Texture fireBall, fireBallHD, charPick, backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
+			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
+			player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3,
+			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD;
 
 	public void renderFinishIt()
 
@@ -193,7 +190,6 @@ public class PerishablePunchersMain
 			renderItDied();
 			renderFinishIt();
 		}
-
 		// render a square for health bar
 		glBegin(GL_QUADS);
 		GL11.glColor3f(0, 0, 0);
@@ -215,7 +211,6 @@ public class PerishablePunchersMain
 				combo1WASD();
 				combo1Arrow();
 			}
-
 			if (Keyboard.getEventKey() == Keyboard.KEY_G)
 			{
 				if (Keyboard.getEventKeyState())
@@ -359,6 +354,7 @@ public class PerishablePunchersMain
 				oldTime = System.currentTimeMillis();
 			} else
 			{
+				combo1WASDNum++;
 			}
 		}
 
@@ -369,6 +365,7 @@ public class PerishablePunchersMain
 				newTime = System.currentTimeMillis();
 			} else
 			{
+				combo1WASDNum++;
 			}
 
 		}
@@ -377,17 +374,19 @@ public class PerishablePunchersMain
 
 		if (dTime < 200 && dTime > 0)
 		{
-			if (Keyboard.getEventKey() == Keyboard.KEY_S && p1CanHit)
+			if (Keyboard.getEventKey() == Keyboard.KEY_S && p1CanHit && combo1WASDNum == 2)
 			{
 				if (Keyboard.getEventKeyState())
+				{
+
+				} else
 				{
 					p2.setHealth(p2.getHealth() - 5);
 					// p1.draw(player1Kombo1);
 					Sound.play("res/Sounds/Kombo.wav");
 					// m_kombo.play();
 					dTime = 0;
-				} else
-				{
+					combo1WASDNum = 0;
 				}
 			}
 
@@ -403,6 +402,7 @@ public class PerishablePunchersMain
 				oldTime = System.currentTimeMillis();
 			} else
 			{
+				combo1ArrowNum++;
 			}
 		}
 
@@ -413,6 +413,8 @@ public class PerishablePunchersMain
 				newTime = System.currentTimeMillis();
 			} else
 			{
+				combo1ArrowNum++;
+
 			}
 
 		}
@@ -421,17 +423,19 @@ public class PerishablePunchersMain
 
 		if (dTime < 200 && dTime > 0)
 		{
-			if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p2CanHit)
+			if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p2CanHit && combo1ArrowNum == 2)
 			{
 				if (Keyboard.getEventKeyState())
+				{
+
+				} else
 				{
 					p1.setHealth(p1.getHealth() - 5);
 					// p2.draw(player2Kombo1);
 					Sound.play("res/Sounds/Kombo.wav");
 					// m_kombo.play();
 					dTime = 0;
-				} else
-				{
+					combo1ArrowNum = 0;
 				}
 			}
 
@@ -509,206 +513,211 @@ public class PerishablePunchersMain
 		System.out.println("ERROR: GAME CRASHED");
 		System.exit(1);
 	}
-	
+
+	public int randomInt(int min, int max)
+	{
+		return (int) (Math.random() * max) + min;
+	}
+
 	public void input()
 	{
-		// graphics settings
-				// 1 n 1
-				if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
 
-				{
-					pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
+		// 1 n 1
+		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
 
-				} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
-				{
-					pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
-				{
-					pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
-				{
-					pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 
-				} else
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
 
-				// 2 n 2
-				if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
+		} else
 
-				{
-					pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+		// 2 n 2
+		if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
 
-				} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
-				{
-					pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
-				{
-					pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
-				{
-					pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
 
-				} else
-				// 3 n 3
-				if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 
-				{
-					pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else
+		// 3 n 3
+		if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
 
-				} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
-				{
-					pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
-				{
-					pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
-				{
-					pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 
-				} else
-				// 4 n 4
-				if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
 
-				{
-					pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else
+		// 4 n 4
+		if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
 
-				} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
-				{
-					pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
-				{
-					pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
-				{
-					pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
 
-				} else
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
 
-				// 1 n 2 & 2 n 1
-				if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
+		} else
 
-				{
-					pollInput(player1, player1Walk, player1Kunch, player1Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+		// 1 n 2 & 2 n 1
+		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
 
-				} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 2)
-				{
-					pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player2, player2Walk, player2Kunch, player2Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 1)
-				{
-					pollInput(player2, player2Walk, player2Kunch, player2Flipped, player1, player1Walk, player1Kunch, player1Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 2)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 1)
-				{
-					pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 1)
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 
-				}
-				// 3 n 4 & 4 n 3
-				else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 4)
-				{
-					pollInput(player3, player3Walk, player3Kunch, player3Flipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 1)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 4)
-				{
-					pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		}
+		// 3 n 4 & 4 n 3
+		else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 4)
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player4, player4Walk, player4Kunch, player4Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 3)
-				{
-					pollInput(player4, player4Walk, player4Kunch, player4Flipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 4)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 3)
-				{
-					pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 3)
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 
-				}
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 3)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
 
-				// 1 n 3 & 3 n 1
-				else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 3)
-				{
-					pollInput(player1, player1Walk, player1Kunch, player1Flipped, player3, player3Walk, player3Kunch, player3Flipped);
+		}
 
-				} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 3)
-				{
-					pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		// 1 n 3 & 3 n 1
+		else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 3)
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 1)
-				{
-					pollInput(player3, player3Walk, player3Kunch, player3Flipped, player1, player1Walk, player1Kunch, player1Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 3)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 1)
-				{
-					pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 1)
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 
-				}
-				
-				// 1 n 4 & 4 n 1
-				else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 4)
-				{
-					pollInput(player1, player1Walk, player1Kunch, player1Flipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 1)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 4)
-				{
-					pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		}
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 1)
-				{
-					pollInput(player4, player4Walk, player4Kunch, player4Flipped, player1, player1Walk, player1Kunch, player1Flipped);
+		// 1 n 4 & 4 n 1
+		else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 4)
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player4, player4Walk, player4Kunch, player4Flipped);
 
-				} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 1)
-				{
-					pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 4)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
 
-				}
-				
-				// 2 n 3 & 3 n 2
-				else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 3)
-				{
-					pollInput(player2, player2Walk, player2Kunch, player2Flipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 1)
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 
-				} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 3)
-				{
-					pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 1)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 2)
-				{
-					pollInput(player3, player3Walk, player3Kunch, player3Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+		}
 
-				} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 2)
-				{
-					pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		// 2 n 3 & 3 n 2
+		else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 3)
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 
-				}
-				
-				// 4 n 2 & 2 n 4
-				else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 4)
-				{
-					pollInput(player2, player2Walk, player2Kunch, player2Flipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 3)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 4)
-				{
-					pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 2)
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player2, player2Walk, player2Kunch, player2Flipped);
 
-				} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 2)
-				{
-					pollInput(player4, player4Walk, player4Kunch, player4Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 2)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 
-				} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 2)
-				{
-					pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		}
 
-				}
+		// 4 n 2 & 2 n 4
+		else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 4)
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player4, player4Walk, player4Kunch, player4Flipped);
 
-				else
-				{
-					crash();
-				}
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 4)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+
+		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 2)
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player2, player2Walk, player2Kunch, player2Flipped);
+
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 2)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+
+		}
+
+		else
+		{
+			crash();
+		}
 	}
 
 	public void gamePlay()
@@ -748,11 +757,12 @@ public class PerishablePunchersMain
 			oneToFinish = false;
 			oneDied = true;
 			renderItDied();
-
 			renderTex(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
+			{
 				reset();
+			}
 		} else
 		{
 			oneToFinish = false;
@@ -775,16 +785,66 @@ public class PerishablePunchersMain
 			oneToFinish2 = false;
 			oneDied = true;
 			renderItDied();
-
 			renderTex(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
+			{
 				reset();
-
+			}
 		} else
 		{
 			oneToFinish2 = false;
 		}
+
+		//
+		// fieball stuff
+
+		// p1
+		if (notDoneP1 && gfxType.equals("8Bit") && p1CanFireBall)
+		{
+			renderTex(fireBall, fireBallX, fireBallY);
+		} else if (notDoneP1 && gfxType.equals("HD") && p1CanFireBall)
+		{
+			renderTex(fireBallHD, fireBallX, fireBallY);
+		} else
+		{
+			fireBallX = p1.getX();
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && gfxType.equals("8Bit"))
+		{
+			renderFireBallP1 = true;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && gfxType.equals("HD"))
+		{
+			renderFireBallP1 = true;
+		} else
+		{
+			renderFireBallP1 = false;
+		}
+
+		// p2
+		if (notDoneP2 && gfxType.equals("8Bit") && p2CanFireBall)
+		{
+			renderTex(fireBall, fireBall2X, fireBall2Y);
+		} else if (notDoneP2 && gfxType.equals("HD") && p2CanFireBall)
+		{
+			renderTex(fireBallHD, fireBall2X, fireBall2Y);
+		} else
+		{
+			fireBall2X = p2.getX();
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) && gfxType.equals("8Bit"))
+		{
+			renderFireBallP2 = true;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) && gfxType.equals("HD"))
+		{
+			renderFireBallP2 = true;
+		} else
+		{
+			renderFireBallP2 = false;
+		}
+
 	}
 
 	public void menu()
@@ -970,7 +1030,7 @@ public class PerishablePunchersMain
 					// System.out.println("CLICKED PLAYER 1");
 					try
 					{
-						Thread.sleep(250);
+						Thread.sleep(100);
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -984,7 +1044,7 @@ public class PerishablePunchersMain
 					// System.out.println("CLICKED PLAYER 1");
 					try
 					{
-						Thread.sleep(250);
+						Thread.sleep(100);
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -1128,6 +1188,10 @@ public class PerishablePunchersMain
 		playSound2Once = true;
 		playSound3Once = true;
 		playDieSound = false;
+		p1CanFireBall = true;
+		p2CanFireBall = true;
+		paused = false;
+
 	}
 
 	public void start()
@@ -1153,7 +1217,6 @@ public class PerishablePunchersMain
 			gameStates();
 			Display.update();// updates screen
 		}
-		AL.destroy();
 		Display.destroy();
 		close = true;
 	}
@@ -1172,11 +1235,13 @@ public class PerishablePunchersMain
 			e.printStackTrace();
 			System.exit(0);
 		}
+		
 		initTexs();
 
 		// create objects here
 		p1 = new Player(120, 100, 10);
 		p2 = new Player(WIDTH - 120 - 256, 100, 10);
+
 		// init vars
 		stopper = false;
 		paused = true;
@@ -1190,20 +1255,6 @@ public class PerishablePunchersMain
 
 		clickCount = 0;
 
-		// try
-		// {
-		// //m_finishIt = new Music("res/Sounds/FinishIt.ogg");
-		// //m_itDied = new Music("res/Sounds/ItDied.ogg");
-		// //m_kombo = new Music("res/Sounds/Kombo.ogg");
-		// //m_punch = new Music("res/Sounds/Punch.ogg");
-		// //m_teaBag = new Music("res/Sounds/TeaBag.ogg");
-		// //m_whoosh = new Music("res/Sounds/Whoosh.ogg");
-		// } catch (SlickException e)
-		// {
-		// e.printStackTrace();
-		// }
-		// end init vars
-
 	}
 
 	public void initTexs()
@@ -1211,6 +1262,10 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+			fireBall = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBall.png"));
+
+			fireBallHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBallHD.png"));
+
 			gfx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Gfx.png"));
 
 			gfx8Bit = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Gfx8Bit.png"));
@@ -1347,7 +1402,6 @@ public class PerishablePunchersMain
 		{
 			e.printStackTrace();
 		}
-
 	}
 
 	public static void main(String[] args)
@@ -1363,6 +1417,56 @@ public class PerishablePunchersMain
 			close = false;
 			while (close == false)
 			{
+				// p1 fireball
+				if (renderFireBallP1 && p1CanFireBall)
+				{
+					notDoneP1 = true;
+					if (playHaduken1Once && p1CanFireBall)
+					{
+						Sound.play("res/Sounds/Haduken.wav");
+						playHaduken1Once = false;
+					}
+				}
+				if (fireBallX < p2.getX() && notDoneP1)
+				{
+					fireBallX += 35;
+				} else if (fireBallX >= p2.getX() && notDoneP1)
+				{
+					p2.setHealth(p2.getHealth() - randomInt(20, 35));
+					playHaduken1Once = true;
+					p1CanFireBall = false;
+					notDoneP1 = false;
+				} else
+				{
+					notDoneP1 = false;
+
+				}
+
+				// p2 fireabll
+				if (renderFireBallP2 && p2CanFireBall)
+				{
+					notDoneP2 = true;
+					if (playHaduken2Once && p2CanFireBall)
+					{
+						Sound.play("res/Sounds/Haduken.wav");
+						playHaduken2Once = false;
+					}
+				}
+				if (fireBall2X > p1.getX() && notDoneP2)
+				{
+					fireBall2X -= 35;
+				} else if (fireBall2X <= p1.getX() && notDoneP2)
+				{
+					p1.setHealth(p1.getHealth() - randomInt(20, 35));
+					playHaduken2Once = true;
+					p2CanFireBall = false;
+					notDoneP2 = false;
+				} else
+				{
+					notDoneP2 = false;
+				}
+
+				// other
 				if (!paused)
 				{
 					p1.fall();
@@ -1401,5 +1505,4 @@ public class PerishablePunchersMain
 			}
 		}
 	};
-
 }

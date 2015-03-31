@@ -53,7 +53,7 @@ public class Player
 	{
 		this.speed = speed;
 	}
-	
+
 	/**
 	 * will render character
 	 */
@@ -83,7 +83,7 @@ public class Player
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
 	}
-	
+
 	/**
 	 * will make character fall, is in 2nd thread
 	 */
@@ -95,7 +95,6 @@ public class Player
 		}
 	}
 
-	
 	/**
 	 * will make character jump
 	 */
@@ -118,7 +117,7 @@ public class Player
 					}
 				}
 				Sound.play("res/Sounds/Jump.wav");
-				//m.play();
+				// m.play();
 			}
 		}
 	}
@@ -130,7 +129,7 @@ public class Player
 	{
 		if (x > 0)
 		{
-			x -= speed;
+			x -= speed*2;
 		}
 	}
 
@@ -141,7 +140,7 @@ public class Player
 	{
 		if (x < WIDTH - w)
 		{
-			x += speed;
+			x += speed*2;
 		}
 	}
 
