@@ -44,18 +44,24 @@ public class PerishablePunchersMain
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
-	private int gameState = 1, player1Tex, player2Tex, clickCount, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0;
+	private int gameState = 1, player1Tex, player2Tex, clickCount, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime;
 	private String gfxType;
 	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
 	private boolean p1CanFireBall = true, p2CanFireBall = true, p1CanHit = true, p2CanHit = true, renderFireBallP1 = false, renderFireBallP2 = false, notDoneP1 = false, notDoneP2 = false, playHaduken1Once = true, playHaduken2Once = true;
 
-	private Texture fireBall, fireBallHD, charPick, backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
-			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
-			player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3,
-			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD;
+	private Texture fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped,
+			player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85,
+			player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD,
+			player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD,
+			player4KunchHD;
 
 	public void renderFinishIt()
+
+	// TODO Make orbs collide, if they collide then it will spawn an explosion
+	// that lasts for about .4 seconds, if a player is inside the size of the
+	// explosion then... the player will take a random amount of damage between
+	// 40-70 of their HP.
 
 	{
 		if (oneToFinish)
@@ -224,6 +230,15 @@ public class PerishablePunchersMain
 					{
 						gfxType = "HD";
 					}
+				}
+			}
+			if (Keyboard.getEventKey() == Keyboard.KEY_R)
+			{
+				if (Keyboard.getEventKeyState())
+				{
+				} else
+				{
+					reset();
 				}
 			}
 
@@ -799,13 +814,43 @@ public class PerishablePunchersMain
 		//
 		// fieball stuff
 
+		if (p1.getX() > p2.getX())
+		{
+			fireBallType = 1;
+		} else
+		{
+			fireBallType = 0;
+		}
+
+		if (p1.getX() > p2.getX())
+		{
+			fireBallType2 = 0;
+		} else
+		{
+			fireBallType2 = 1;
+		}
+
 		// p1
 		if (notDoneP1 && gfxType.equals("8Bit") && p1CanFireBall)
 		{
-			renderTex(fireBall, fireBallX, fireBallY);
+			if (fireBallType == 0)
+			{
+				renderTex(fireBall, fireBallX, fireBallY);
+				// System.out.println("p1fbt  = 0");
+			} else if (fireBallType == 1)
+			{
+				renderTex(fireBallFlipped, fireBallX, fireBallY);
+				// System.out.println("p1fbt  = 1");
+			}
 		} else if (notDoneP1 && gfxType.equals("HD") && p1CanFireBall)
 		{
-			renderTex(fireBallHD, fireBallX, fireBallY);
+			if (fireBallType == 0)
+			{
+				renderTex(fireBallHD, fireBallX, fireBallY);
+			} else if (fireBallType == 1)
+			{
+				renderTex(fireBallHDFlipped, fireBallX, fireBallY);
+			}
 		} else
 		{
 			fireBallX = p1.getX();
@@ -825,10 +870,22 @@ public class PerishablePunchersMain
 		// p2
 		if (notDoneP2 && gfxType.equals("8Bit") && p2CanFireBall)
 		{
-			renderTex(fireBall, fireBall2X, fireBall2Y);
+			if (fireBallType2 == 0)
+			{
+				renderTex(fireBall, fireBall2X, fireBall2Y);
+			} else if (fireBallType2 == 1)
+			{
+				renderTex(fireBallFlipped, fireBall2X, fireBall2Y);
+			}
 		} else if (notDoneP2 && gfxType.equals("HD") && p2CanFireBall)
 		{
-			renderTex(fireBallHD, fireBall2X, fireBall2Y);
+			if (fireBallType2 == 0)
+			{
+				renderTex(fireBallHD, fireBall2X, fireBall2Y);
+			} else if (fireBallType2 == 1)
+			{
+				renderTex(fireBallHDFlipped, fireBall2X, fireBall2Y);
+			}
 		} else
 		{
 			fireBall2X = p2.getX();
@@ -982,8 +1039,8 @@ public class PerishablePunchersMain
 			GL11.glColor3f(0, 0, 0);
 			glVertex2f(220, HEIGHT - 75);
 			glVertex2f(425, HEIGHT - 75);
-			glVertex2f(425, HEIGHT - 320);
-			glVertex2f(220, HEIGHT - 320);
+			glVertex2f(425, HEIGHT - 350);
+			glVertex2f(220, HEIGHT - 350);
 			glEnd();
 		}
 
@@ -1004,8 +1061,8 @@ public class PerishablePunchersMain
 			GL11.glColor3f(0, 0, 0);
 			glVertex2f(865, HEIGHT - 75);
 			glVertex2f(1080, HEIGHT - 75);
-			glVertex2f(1080, HEIGHT - 320);
-			glVertex2f(865, HEIGHT - 320);
+			glVertex2f(1080, HEIGHT - 350);
+			glVertex2f(865, HEIGHT - 350);
 			glEnd();
 		}
 
@@ -1235,7 +1292,7 @@ public class PerishablePunchersMain
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
+
 		initTexs();
 
 		// create objects here
@@ -1265,6 +1322,10 @@ public class PerishablePunchersMain
 			fireBall = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBall.png"));
 
 			fireBallHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBallHD.png"));
+
+			fireBallFlipped = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBallFlipped.png"));
+
+			fireBallHDFlipped = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBallHDFlipped.png"));
 
 			gfx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Gfx.png"));
 
@@ -1415,6 +1476,7 @@ public class PerishablePunchersMain
 		public void run()
 		{
 			close = false;
+
 			while (close == false)
 			{
 				// p1 fireball
@@ -1427,19 +1489,39 @@ public class PerishablePunchersMain
 						playHaduken1Once = false;
 					}
 				}
-				if (fireBallX < p2.getX() && notDoneP1)
+				if (p1.getX() < p2.getX())
 				{
-					fireBallX += 35;
-				} else if (fireBallX >= p2.getX() && notDoneP1)
+					if (fireBallX < p2.getX() && notDoneP1)
+					{
+						fireBallX += 35;
+					} else if (fireBallX >= p2.getX() && notDoneP1)
+					{
+						p2.setHealth(p2.getHealth() - randomInt(1, 99));
+						Sound.play("res/Sounds/Explosion.wav");
+						playHaduken1Once = true;
+						p1CanFireBall = false;
+						notDoneP1 = false;
+					} else
+					{
+						notDoneP1 = false;
+					}
+				} else if (p1.getX() > p2.getX())
 				{
-					p2.setHealth(p2.getHealth() - randomInt(20, 35));
-					playHaduken1Once = true;
-					p1CanFireBall = false;
-					notDoneP1 = false;
-				} else
-				{
-					notDoneP1 = false;
 
+					if (fireBallX > p2.getX() && notDoneP1)
+					{
+						fireBallX -= 35;
+					} else if (fireBallX <= p2.getX() && notDoneP1)
+					{
+						p2.setHealth(p2.getHealth() - randomInt(1, 99));
+						Sound.play("res/Sounds/Explosion.wav");
+						playHaduken1Once = true;
+						p1CanFireBall = false;
+						notDoneP1 = false;
+					} else
+					{
+						notDoneP1 = false;
+					}
 				}
 
 				// p2 fireabll
@@ -1452,18 +1534,39 @@ public class PerishablePunchersMain
 						playHaduken2Once = false;
 					}
 				}
-				if (fireBall2X > p1.getX() && notDoneP2)
+
+				if (p2.getX() > p1.getX())
 				{
-					fireBall2X -= 35;
-				} else if (fireBall2X <= p1.getX() && notDoneP2)
+					if (fireBall2X > p1.getX() && notDoneP2)
+					{
+						fireBall2X -= 35;
+					} else if (fireBall2X <= p1.getX() && notDoneP2)
+					{
+						p1.setHealth(p1.getHealth() - randomInt(20, 35));
+						Sound.play("res/Sounds/Explosion.wav");
+						playHaduken2Once = true;
+						p2CanFireBall = false;
+						notDoneP2 = false;
+					} else
+					{
+						notDoneP2 = false;
+					}
+				} else if (p2.getX() < p1.getX())
 				{
-					p1.setHealth(p1.getHealth() - randomInt(20, 35));
-					playHaduken2Once = true;
-					p2CanFireBall = false;
-					notDoneP2 = false;
-				} else
-				{
-					notDoneP2 = false;
+					if (fireBall2X < p1.getX() && notDoneP2)
+					{
+						fireBall2X += 35;
+					} else if (fireBall2X >= p1.getX() && notDoneP2)
+					{
+						p1.setHealth(p1.getHealth() - randomInt(20, 35));
+						Sound.play("res/Sounds/Explosion.wav");
+						playHaduken2Once = true;
+						p2CanFireBall = false;
+						notDoneP2 = false;
+					} else
+					{
+						notDoneP2 = false;
+					}
 				}
 
 				// other

@@ -129,7 +129,7 @@ public class Player
 	{
 		if (x > 0)
 		{
-			x -= speed*2;
+			x -= speed;
 		}
 	}
 
@@ -140,7 +140,7 @@ public class Player
 	{
 		if (x < WIDTH - w)
 		{
-			x += speed*2;
+			x += speed;
 		}
 	}
 
