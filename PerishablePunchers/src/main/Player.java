@@ -26,7 +26,8 @@ import org.newdawn.slick.opengl.Texture;
 public class Player
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
-	private int x, y, w = 256, h = 256, speed, health;
+	private int x, w = 256, h = 256, speed, health;
+	private float y;
 
 	/**
 	 * @param ex
@@ -91,7 +92,18 @@ public class Player
 	{
 		if (y < HEIGHT - h)
 		{
-			y += speed * 2;
+			y += speed * 20;
+		}
+	}
+
+	public void dFall(long delta)
+	{
+		if (y < HEIGHT - h)
+		{
+			y += 0.625f * delta;
+		} else
+		{
+			y = HEIGHT - h + 1;
 		}
 	}
 
@@ -100,14 +112,13 @@ public class Player
 	 */
 	public void jump()
 	{
-
 		if (y >= HEIGHT - 280)
 		{
 			if (y > HEIGHT / 2 - h / 2)
 			{
 				for (int i = 0; i < 7; i++)
 				{
-					y -= speed * 4;
+					y -= 2 * speed * 20;
 					try
 					{
 						Thread.sleep(15);
@@ -116,8 +127,9 @@ public class Player
 						e.printStackTrace();
 					}
 				}
-				Sound.play("res/Sounds/Jump.wav");
-				// m.play();
+				//Sound.play("res/Sounds/Jump.wav");
+				Sound.play("Jump.wav");
+
 			}
 		}
 	}
@@ -125,22 +137,22 @@ public class Player
 	/**
 	 * will move character left
 	 */
-	public void moveLeft()
+	public void moveLeft(long delta)
 	{
 		if (x > 0)
 		{
-			x -= speed;
+			x -= delta * speed;
 		}
 	}
 
 	/**
 	 * will move character right
 	 */
-	public void moveRight()
+	public void moveRight(long delta)
 	{
 		if (x < WIDTH - w)
 		{
-			x += speed;
+			x += delta * speed;
 		}
 	}
 
@@ -203,7 +215,7 @@ public class Player
 	/**
 	 * @return
 	 */
-	public int getY()
+	public float getY()
 	{
 		return y;
 	}

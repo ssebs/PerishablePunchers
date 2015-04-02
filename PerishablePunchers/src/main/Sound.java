@@ -1,10 +1,8 @@
 package main;
 
-import java.io.File;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.net.URL;
 
 public class Sound
 {
@@ -16,16 +14,21 @@ public class Sound
 			public void run()
 			{
 				// orig, working, but not in jar
-				try
-				{
-					Clip clip = AudioSystem.getClip();
-					AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File(fileName));
-					clip.open(inputStream);
-					clip.start();
-				} catch (Exception e)
-				{
-					System.out.println("play sound error: " + e.getMessage() + " for " + fileName);
-				}
+//				try
+//				{
+//					AudioInputStream inputStream = AudioSystem.getAudioInputStream((Sound.class.getResource(fileName)));
+//					Clip clip = AudioSystem.getClip();
+//					clip.open(inputStream);
+//					clip.start();
+//				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
+//				{
+//					e.printStackTrace();
+//					System.out.println("play sound error: " + e.getMessage() + " for " + fileName);
+//				}
+				
+				URL url = Sound.class.getResource(fileName);
+				AudioClip clip = Applet.newAudioClip(url);
+				clip.play();
 
 			}
 		}).start();
