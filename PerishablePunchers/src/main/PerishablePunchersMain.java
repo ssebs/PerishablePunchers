@@ -48,7 +48,7 @@ public class PerishablePunchersMain
 	private int hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
-	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beggining, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
+	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
 			p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
 	private Texture diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay,
@@ -56,6 +56,9 @@ public class PerishablePunchersMain
 			player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD,
 			player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD,
 			player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD, sp, mp, spmp;
+
+	// TODO: add dargon character, only if hovered on char select screen on
+	// corner, render dargon there when hovered
 
 	private static long getTime()
 	{
@@ -1052,7 +1055,7 @@ public class PerishablePunchersMain
 					p1.setHealth(p1.getHealth() - 7);
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
 					Sound.play("Punch.wav");
-				} else if (r1 >= dmg-5 && r1 < dmg)
+				} else if (r1 >= dmg - 5 && r1 < dmg)
 				{
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
 					Sound.play("Whoosh.wav");
@@ -1570,7 +1573,7 @@ public class PerishablePunchersMain
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN))
 		{
 			gfxType = "HD";
-			beggining = false;
+			beginning = false;
 			gameState = 0;
 			player1Tex = 1;
 			player2Tex = 2;
@@ -1595,10 +1598,10 @@ public class PerishablePunchersMain
 						e.printStackTrace();
 					}
 
-					if (beggining)
+					if (beginning)
 					{
 						gameState = 5;
-						beggining = false;
+						beginning = false;
 					} else
 					{
 						gameState = 0;
@@ -1649,6 +1652,23 @@ public class PerishablePunchersMain
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		{
+			clickCount = 0;
+			gameState = 3;
+			renderDot1 = false;
+			renderDot2 = false;
+			renderDot3 = false;
+			renderDot4 = false;
+			Display.update();
+			try
+			{
+				Thread.sleep(250);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		if (Mouse.isButtonDown(0))
 		{
 			if (x >= 390 && x <= 890)
@@ -1695,6 +1715,23 @@ public class PerishablePunchersMain
 	private void charSelect()
 	{
 		renderTex(charPick, 0, 0);
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		{
+			if ((clickCountMaps == 0))
+			{
+				clickCountMaps = 0;
+				gameState = 4;
+				Display.update();
+				try
+				{
+					Thread.sleep(250);
+				} catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 
 		if (renderDot1)
 		{
@@ -1971,6 +2008,12 @@ public class PerishablePunchersMain
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		{
+			beginning = true;
+			gameState = 1;
+		}
+
 		if (Mouse.isButtonDown(0))
 		{
 			if (x >= 400 && x <= 875)
@@ -2017,11 +2060,21 @@ public class PerishablePunchersMain
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
-		if (clickCountMaps >= 1)
+		if (clickCountMaps == 1)
 		{
 			gameState = 3;
 		}
-
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		{
+			gameState = 5;
+			try
+			{
+				Thread.sleep(250);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		if (Mouse.isButtonDown(0))
 		{
 			if (x >= 85 && x <= 570)// top left guy
@@ -2321,7 +2374,7 @@ public class PerishablePunchersMain
 		playSoundOnce = true;
 		playSound2Once = true;
 		playSound3Once = true;
-		beggining = true;
+		beginning = true;
 		playDieSound = false;
 		fireBallCollisionOnce = true;
 		p1CanFireBall = true;
