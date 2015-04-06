@@ -47,7 +47,7 @@ public class PerishablePunchersMain
 	private Player p1, p2;
 	private Runnable haduken;
 	private int gameState = 1, player1Tex, player2Tex, clickCount, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
-	private long oldTime = 0, newTime = 0, dTime;
+	private long oldTime = 0, newTime = 0, dTime, oldTime2 = 0, newTime2 = 0, dTime2;
 	private String gfxType;
 	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
 	private boolean fireBallCollisionOnce = true, p1CanFireBall = true, p2CanFireBall = true, p1CanHit = true, p2CanHit = true, renderFireBallP1 = false, renderFireBallP2 = false, notDoneP1 = false, notDoneP2 = false, playHaduken1Once = true,
@@ -57,7 +57,7 @@ public class PerishablePunchersMain
 			player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85,
 			player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD,
 			player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD,
-			player4KunchHD;
+			player4KunchHD, explosion, explosionHD;
 
 	// TODO Make orbs collide, if they collide then it will spawn an explosion
 	// that lasts for about .4 seconds, if a player is inside the size of the
@@ -232,11 +232,8 @@ public class PerishablePunchersMain
 		while (Keyboard.next())
 		{
 
-			if (colliding())
-			{
-				combo1WASD();
-				combo1Arrow();
-			}
+			combo1WASD();
+			combo1Arrow();
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_G)
 			{
@@ -413,7 +410,7 @@ public class PerishablePunchersMain
 
 		dTime = (newTime - oldTime);
 
-		if (dTime < 200 && dTime > 0)
+		if (dTime < 400 && dTime > 0)
 		{
 			if (Keyboard.getEventKey() == Keyboard.KEY_S && p1CanHit && combo1WASDNum == 2)
 			{
@@ -422,13 +419,16 @@ public class PerishablePunchersMain
 
 				} else
 				{
-					p2.setHealth(p2.getHealth() - 5);
-					// p1.draw(player1Kombo1);
-					// Sound.play("res/Sounds/Kombo.wav");
-					Sound.play("Kombo.wav");
-					// m_kombo.play();
-					dTime = 0;
-					combo1WASDNum = 0;
+					if (colliding())
+					{
+						p2.setHealth(p2.getHealth() - 5);
+						// p1.draw(player1Kombo1);
+						// Sound.play("res/Sounds/Kombo.wav");
+						Sound.play("Kombo.wav");
+						// m_kombo.play();
+						dTime = 0;
+						combo1WASDNum = 0;
+					}
 				}
 			}
 
@@ -441,7 +441,7 @@ public class PerishablePunchersMain
 		{
 			if (Keyboard.getEventKeyState())
 			{
-				oldTime = System.currentTimeMillis();
+				oldTime2 = System.currentTimeMillis();
 			} else
 			{
 				combo1ArrowNum++;
@@ -452,7 +452,7 @@ public class PerishablePunchersMain
 		{
 			if (Keyboard.getEventKeyState())
 			{
-				newTime = System.currentTimeMillis();
+				newTime2 = System.currentTimeMillis();
 			} else
 			{
 				combo1ArrowNum++;
@@ -461,9 +461,9 @@ public class PerishablePunchersMain
 
 		}
 
-		dTime = (newTime - oldTime);
+		dTime2 = (newTime2 - oldTime2);
 
-		if (dTime < 200 && dTime > 0)
+		if (dTime2 < 400 && dTime2 > 0)
 		{
 			if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p2CanHit && combo1ArrowNum == 2)
 			{
@@ -472,13 +472,16 @@ public class PerishablePunchersMain
 
 				} else
 				{
-					p1.setHealth(p1.getHealth() - 5);
-					// p2.draw(player2Kombo1);
-					// Sound.play("res/Sounds/Kombo.wav");
-					Sound.play("Kombo.wav");
-					// m_kombo.play();
-					dTime = 0;
-					combo1ArrowNum = 0;
+					if (colliding())
+					{
+						p1.setHealth(p1.getHealth() - 5);
+						// p2.draw(player2Kombo1);
+						// Sound.play("res/Sounds/Kombo.wav");
+						Sound.play("Kombo.wav");
+						// m_kombo.play();
+						dTime2 = 0;
+						combo1ArrowNum = 0;
+					}
 				}
 			}
 
@@ -782,8 +785,6 @@ public class PerishablePunchersMain
 			p2CanHit = true;
 		}
 
-		input();
-
 		// P1 FINISH
 		if (p1.getHealth() < 6 && p1.getHealth() > 0)
 		{
@@ -863,16 +864,6 @@ public class PerishablePunchersMain
 			fireBallType2 = 1;
 		}
 
-		// fireBall explosion thing
-		if (fireBallX >= fireBall2X && fireBallX <= fireBall2X + 256)// colliding
-		{
-			if (fireBallX != 0 && fireBallCollisionOnce)
-			{
-				System.out.println("FIREBALLS TOUCHING");
-				fireBallCollisionOnce = false;
-			}
-		}
-
 		// p1
 		if (notDoneP1 && gfxType.equals("8Bit") && p1CanFireBall)
 		{
@@ -945,6 +936,46 @@ public class PerishablePunchersMain
 			renderFireBallP2 = false;
 		}
 
+		input();
+
+		if (notDoneP1 && notDoneP2)
+		{
+			// fireBall explosion thing
+			if (fireBallX >= fireBall2X && fireBallX <= fireBall2X + 256)// colliding
+			{
+				if (fireBallX != 0 && fireBallCollisionOnce)
+				{
+					System.out.println("FIREBALLS TOUCHING");
+					renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
+					notDoneP1 = false;
+					notDoneP2 = false;
+
+					if (p1.getX() + p1.getW() >= fireBallX - 128 && fireBallX - 128 + 512 >= p1.getX())
+					{
+						// dmg
+						System.out.println("DO DMGs P1");
+						p1.setHealth(p1.getHealth() - randomInt(25, 50));
+					}
+					if (p2.getX() + p2.getW() >= fireBallX - 128 && fireBallX - 128 + 512 >= p2.getX())
+					{
+						// dmg
+						System.out.println("DO DMGs P2");
+						p2.setHealth(p2.getHealth() - randomInt(25, 50));
+					}
+
+					Display.update();
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+
+					fireBallCollisionOnce = false;
+				}
+			}
+		}
 	}
 
 	private void reset()
@@ -1286,10 +1317,6 @@ public class PerishablePunchersMain
 
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
-		{
-			gameState = 2;
-		}
 	}
 
 	private void gameStates()
@@ -1340,6 +1367,11 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+
+			explosion = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Explosion.png"));
+
+			explosionHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/ExplosionHD.png"));
+
 			fireBall = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBall.png"));
 
 			fireBallHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FireBallHD.png"));
@@ -1522,9 +1554,8 @@ public class PerishablePunchersMain
 		clickCount = 0;
 		Thread th1 = new Thread(run1);// multithreading
 		th1.start();
-		 haduken = new HadukenSound();
-		
-		
+		haduken = new HadukenSound();
+
 		loop();
 
 	}
@@ -1537,6 +1568,7 @@ public class PerishablePunchersMain
 
 	Runnable run1 = new Runnable()
 	{
+		@Override
 		public void run()
 		{
 			close = false;
@@ -1599,7 +1631,7 @@ public class PerishablePunchersMain
 					if (playHaduken2Once && p2CanFireBall)
 					{
 						// Sound.play("res/Sounds/Haduken.wav");
-						//Sound.play("Haduken.wav");
+						// Sound.play("Haduken.wav");
 						new Thread(haduken).start();
 						playHaduken2Once = false;
 					}
@@ -1641,12 +1673,6 @@ public class PerishablePunchersMain
 					}
 				}
 
-				// other
-				if (!paused)
-				{
-					// p1.fall();
-					// p2.fall();
-				}
 				if (isP1Jumping)
 				{
 					p1.jump();

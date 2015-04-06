@@ -11,6 +11,7 @@ public class Sound
 		// Note: use .wav files
 		new Thread(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				// orig, working, but not in jar

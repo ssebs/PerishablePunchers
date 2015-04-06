@@ -11,6 +11,7 @@ public class HadukenSound implements Runnable
 
 	}
 
+	@Override
 	public void run()
 	{
 		URL url = Sound.class.getResource("Haduken.wav");
