@@ -13,24 +13,10 @@ public class Sound
 		{
 			@Override
 			public void run()
-			{
-				// orig, working, but not in jar
-//				try
-//				{
-//					AudioInputStream inputStream = AudioSystem.getAudioInputStream((Sound.class.getResource(fileName)));
-//					Clip clip = AudioSystem.getClip();
-//					clip.open(inputStream);
-//					clip.start();
-//				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
-//				{
-//					e.printStackTrace();
-//					System.out.println("play sound error: " + e.getMessage() + " for " + fileName);
-//				}
-				
+			{			
 				URL url = Sound.class.getResource(fileName);
 				AudioClip clip = Applet.newAudioClip(url);
 				clip.play();
-
 			}
 		}).start();
 	}

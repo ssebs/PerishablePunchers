@@ -21,7 +21,6 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.io.IOException;
 
@@ -47,11 +46,10 @@ public class PerishablePunchersMain
 	private Player p1, p2;
 	private Runnable haduken;
 	private int gameState = 1, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
-	private long oldTime = 0, newTime = 0, dTime, oldTime2 = 0, newTime2 = 0, dTime2;
+	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
-	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
-	private boolean fireBallCollisionOnce = true, p1CanFireBall = true, p2CanFireBall = true, p1CanHit = true, p2CanHit = true, renderFireBallP1 = false, renderFireBallP2 = false, notDoneP1 = false, notDoneP2 = false, playHaduken1Once = true,
-			playHaduken2Once = true;
+	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beggining, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
+			p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
 	private Texture parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt,
 			player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10,
@@ -59,10 +57,7 @@ public class PerishablePunchersMain
 			player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD,
 			player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD;
 
-	// TODO Make orbs collide, if they collide then it will spawn an explosion
-	// that lasts for about .4 seconds, if a player is inside the size of the
-	// explosion then... the player will take a random amount of damage between
-	// 40-70 of their HP.
+	// TODO MAKE AI.
 
 	private static long getTime()
 	{
@@ -78,7 +73,6 @@ public class PerishablePunchersMain
 	}
 
 	private void renderFinishIt()
-
 	{
 		if (oneToFinish)
 		{
@@ -170,14 +164,9 @@ public class PerishablePunchersMain
 	private void renderTex(Texture tex, int x, int y)
 	{
 		glEnable(GL_TEXTURE_2D);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glViewport(0, 0, WIDTH, HEIGHT);
-		glMatrixMode(GL_MODELVIEW);
-		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		Color.white.bind();
 		tex.bind();
@@ -196,6 +185,7 @@ public class PerishablePunchersMain
 
 	private void render()
 	{
+		glClearColor(0, 0, 0, 1);
 		// remember, rendered things will go ontop of another
 		if (gfxType.equals("8Bit"))
 		{
@@ -252,8 +242,8 @@ public class PerishablePunchersMain
 	private void pollInput(Texture player1, Texture p1Walk, Texture player1Kunch, Texture player1Flipped, Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
 		long delta = (long) getDelta();
-		p1.dFall(delta);
-		p2.dFall(delta);
+		p1.fall(delta);
+		p2.fall(delta);
 
 		while (Keyboard.next())
 		{
@@ -276,13 +266,29 @@ public class PerishablePunchersMain
 					}
 				}
 			}
+			if (Keyboard.getEventKey() == Keyboard.KEY_V)
+			{
+				if (Keyboard.getEventKeyState())
+				{
+				} else
+				{
+					if (vSync)
+					{
+						Display.setVSyncEnabled(false);
+						vSync = !vSync;
+					} else
+					{
+						Display.setVSyncEnabled(true);
+						vSync = !vSync;
+					}
+				}
+			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_R)
 			{
 				if (Keyboard.getEventKeyState())
 				{
 				} else
 				{
-					// reset();
 					Display.destroy();
 					close = true;
 					new PerishablePunchersMain().init();
@@ -299,7 +305,6 @@ public class PerishablePunchersMain
 				} else
 				{
 					isP1Jumping = false;
-
 				}
 			}
 
@@ -322,21 +327,14 @@ public class PerishablePunchersMain
 				{
 				} else
 				{
-					// System.out.println("Colliding: " + colliding());
 					if (colliding())
 					{
 						p1.setHealth(p1.getHealth() - 5);
-						// Sound.play("res/Sounds/Punch.wav");
 						Sound.play("Punch.wav");
-						// m_punch.play();
 					} else
 					{
-						// Sound.play("res/Sounds/Whoosh.wav");
 						Sound.play("Whoosh.wav");
-						// System.out.println("Should play sound");
-						// m_whoosh.play();
 					}
-
 				}
 			}
 
@@ -347,19 +345,13 @@ public class PerishablePunchersMain
 				{
 				} else
 				{
-					// System.out.println("Colliding: " + colliding());
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						// Sound.play("res/Sounds/Punch.wav");
 						Sound.play("Punch.wav");
-						// m_punch.play();
 					} else
 					{
-						// Sound.play("res/Sounds/Whoosh.wav");
 						Sound.play("Whoosh.wav");
-						// System.out.println("Should play sound");
-						// m_whoosh.play();
 					}
 				}
 			}
@@ -452,10 +444,7 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						// p1.draw(player1Kombo1);
-						// Sound.play("res/Sounds/Kombo.wav");
 						Sound.play("Kombo.wav");
-						// m_kombo.play();
 						dTime = 0;
 						combo1WASDNum = 0;
 					}
@@ -505,16 +494,12 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p1.setHealth(p1.getHealth() - 5);
-						// p2.draw(player2Kombo1);
-						// Sound.play("res/Sounds/Kombo.wav");
 						Sound.play("Kombo.wav");
-						// m_kombo.play();
 						dTime2 = 0;
 						combo1ArrowNum = 0;
 					}
 				}
 			}
-
 		}
 	}
 
@@ -543,22 +528,16 @@ public class PerishablePunchersMain
 			{
 				if (p2.getY() - 0 <= HEIGHT - 400)// arbitrary
 				{
-					if (colliding() && playSound3Once) // need to make &&
-														// oneToFinish work
+					if (colliding() && playSound3Once)
 					{
-						// System.out.println("FINISHING MOVE");
-						// Sound.play("res/Sounds/TeaBag.wav");
 						Sound.play("TeaBag.wav");
-						// m_teaBag.play();
 						playSound3Once = false;
 					}
 				}
-
 			} else
 			{
 			}
 		}
-
 	}
 
 	private void finishingMoveWASD()
@@ -571,19 +550,14 @@ public class PerishablePunchersMain
 				{
 					if (colliding() && playSound3Once)
 					{
-						// System.out.println("FINISHING MOVE");
-						// Sound.play("res/Sounds/TeaBag.wav");
 						Sound.play("TeaBag.wav");
-						// m_teaBag.play();
 						playSound3Once = false;
 					}
 				}
-
 			} else
 			{
 			}
 		}
-
 	}
 
 	private void crash()
@@ -599,200 +573,146 @@ public class PerishablePunchersMain
 
 	private void input()
 	{
-
 		// 1 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
-
 		{
 			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
 		{
 			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
 		{
 			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
 		{
 			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-
 		} else
-
 		// 2 n 2
 		if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
-
 		{
 			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
 		{
 			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
 		{
 			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
 		{
 			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-
 		} else
 		// 3 n 3
 		if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
-
 		{
 			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
 		{
 			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
 		{
 			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
 		{
 			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-
 		} else
 		// 4 n 4
 		if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
-
 		{
 			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
 		{
 			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-
 		} else
-
 		// 1 n 2 & 2 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
-
 		{
 			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 2)
 		{
 			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 1)
 		{
 			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 1)
 		{
 			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-
 		}
 		// 3 n 4 & 4 n 3
 		else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 4)
 		{
 			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 4)
 		{
 			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 3)
 		{
 			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 3)
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-
 		}
-
 		// 1 n 3 & 3 n 1
 		else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 3)
 		{
 			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 3)
 		{
 			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 1)
 		{
 			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 1)
 		{
 			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-
 		}
-
 		// 1 n 4 & 4 n 1
 		else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 4)
 		{
 			pollInput(player1, player1Walk, player1Kunch, player1Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 4)
 		{
 			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 1)
 		{
 			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 1)
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-
 		}
-
 		// 2 n 3 & 3 n 2
 		else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 3)
 		{
 			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 3)
 		{
 			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 2)
 		{
 			pollInput(player3, player3Walk, player3Kunch, player3Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 2)
 		{
 			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-
 		}
-
 		// 4 n 2 & 2 n 4
 		else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 4)
 		{
 			pollInput(player2, player2Walk, player2Kunch, player2Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 4)
 		{
 			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-
 		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 2)
 		{
 			pollInput(player4, player4Walk, player4Kunch, player4Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 2)
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-
-		}
-
-		else
+		} else
 		{
 			crash();
 		}
@@ -823,9 +743,7 @@ public class PerishablePunchersMain
 			finishingMoveArrow();
 			if (playSoundOnce)
 			{
-				// Sound.play("res/Sounds/FinishIt.wav");
 				Sound.play("FinishIt.wav");
-				// m_finishIt.play();
 				playSoundOnce = false;
 			}
 			// P1 DIED
@@ -852,10 +770,7 @@ public class PerishablePunchersMain
 			finishingMoveWASD();
 			if (playSoundOnce)
 			{
-				// Sound.play("res/Sounds/FinishIt.wav");
 				Sound.play("FinishIt.wav");
-
-				// m_finishIt.play();
 				playSoundOnce = false;
 			}
 			// P2 DIED
@@ -875,9 +790,7 @@ public class PerishablePunchersMain
 			oneToFinish2 = false;
 		}
 
-		//
 		// fieball stuff
-
 		if (p1.getX() > p2.getX())
 		{
 			fireBallType = 1;
@@ -900,11 +813,9 @@ public class PerishablePunchersMain
 			if (fireBallType == 0)
 			{
 				renderTex(fireBall, fireBallX, fireBallY);
-				// System.out.println("p1fbt  = 0");
 			} else if (fireBallType == 1)
 			{
 				renderTex(fireBallFlipped, fireBallX, fireBallY);
-				// System.out.println("p1fbt  = 1");
 			}
 		} else if (notDoneP1 && gfxType.equals("HD") && p1CanFireBall)
 		{
@@ -998,7 +909,6 @@ public class PerishablePunchersMain
 						System.out.println("DO DMGs P2");
 						p2.setHealth(p2.getHealth() - randomInt(25, 50));
 					}
-
 					Display.update();
 					try
 					{
@@ -1033,7 +943,6 @@ public class PerishablePunchersMain
 		p2CanFireBall = true;
 		notDoneP1 = false;
 		fireBallCollisionOnce = true;
-
 	}
 
 	private void menu()
@@ -1041,8 +950,6 @@ public class PerishablePunchersMain
 		renderTex(menu, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
-		// System.out.println("X: " + x + "\nY: " + y);
-
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN))
 		{
 			gfxType = "HD";
@@ -1052,7 +959,6 @@ public class PerishablePunchersMain
 			player2Tex = 2;
 			map = 1;
 			Sound.play("Gong.wav");
-
 		}
 
 		if (Mouse.isButtonDown(0))
@@ -1079,8 +985,6 @@ public class PerishablePunchersMain
 					{
 						gameState = 0;
 					}
-
-					// System.out.println("PLAY BUTTON CLICKED");
 				}
 			}
 
@@ -1088,7 +992,6 @@ public class PerishablePunchersMain
 			{
 				if (y >= 225 && y <= 330)
 				{
-					// System.out.println("QUIT BUTTON CLICKED");
 					renderTex(menuQuit, 0, 0);
 					Display.update();
 					try
@@ -1098,7 +1001,9 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					stopper = true;
+					close = true;
+					Display.destroy();
+					System.exit(0);
 				}
 			}
 		}
@@ -1115,7 +1020,6 @@ public class PerishablePunchersMain
 		renderTex(gfx, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
-		// System.out.println("X: " + x + "\nY: " + y);
 
 		if (Mouse.isButtonDown(0))
 		{
@@ -1125,7 +1029,6 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfx8Bit, 0, 0);
 					gfxType = "8Bit";
-					// Sound.play("res/Sounds/Gong.wav");
 					Sound.play("Gong.wav");
 
 					Display.update();
@@ -1137,17 +1040,14 @@ public class PerishablePunchersMain
 						e.printStackTrace();
 					}
 					gameState = 0;
-					// System.out.println("PLAY BUTTON CLICKED");
 				}
 			}
 			if (x >= 385 && x <= 890)
 			{
 				if (y >= 108 && y <= 270)
 				{
-					// System.out.println("QUIT BUTTON CLICKED");
 					renderTex(gfxHD, 0, 0);
 					gfxType = "HD";
-					// Sound.play("res/Sounds/Gong.wav");
 					Sound.play("Gong.wav");
 
 					Display.update();
@@ -1229,7 +1129,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player1Tex = 1;
 					renderDot1 = true;
-					// System.out.println("CLICKED PLAYER 1");
 					try
 					{
 						Thread.sleep(100);
@@ -1242,8 +1141,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player2Tex = 1;
 					renderDot1 = true;
-
-					// System.out.println("CLICKED PLAYER 1");
 					try
 					{
 						Thread.sleep(100);
@@ -1258,10 +1155,10 @@ public class PerishablePunchersMain
 			{
 				if (y >= 75 && y <= 320 && clickCount == 0)
 				{
+
 					clickCount++;
 					player1Tex = 2;
 					renderDot2 = true;
-					// System.out.println("CLICKED PLAYER 2");
 					try
 					{
 						Thread.sleep(250);
@@ -1274,7 +1171,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player2Tex = 2;
 					renderDot2 = true;
-					// System.out.println("CLICKED PLAYER 2");
 					try
 					{
 						Thread.sleep(250);
@@ -1292,7 +1188,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player1Tex = 3;
 					renderDot3 = true;
-					// System.out.println("CLICKED PLAYER 3");
 					try
 					{
 						Thread.sleep(250);
@@ -1305,7 +1200,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player2Tex = 3;
 					renderDot3 = true;
-					// System.out.println("CLICKED PLAYER 3");
 					try
 					{
 						Thread.sleep(250);
@@ -1323,7 +1217,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player1Tex = 4;
 					renderDot4 = true;
-					// System.out.println("CLICKED PLAYER 4");
 					try
 					{
 						Thread.sleep(250);
@@ -1336,7 +1229,6 @@ public class PerishablePunchersMain
 					clickCount++;
 					player2Tex = 4;
 					renderDot4 = true;
-					// System.out.println("CLICKED PLAYER 4");
 					try
 					{
 						Thread.sleep(250);
@@ -1346,9 +1238,7 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-
 		}
-
 	}
 
 	private void gameStates()
@@ -1380,7 +1270,7 @@ public class PerishablePunchersMain
 		renderTex(maps, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
-		// System.out.println("X: " + x + "\nY: " + y);
+
 		if (clickCountMaps >= 1)
 		{
 			gameState = 3;
@@ -1451,18 +1341,13 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-
 		}
 	}
 
 	private void loop()
 	{
-		while (stopper == false)
+		while (!Display.isCloseRequested())
 		{
-			if (Display.isCloseRequested())
-			{
-				stopper = true;
-			}
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
@@ -1670,7 +1555,7 @@ public class PerishablePunchersMain
 
 		// init vars
 		lastFrame = getTime();
-		stopper = false;
+
 		oneDied = false;
 		oneToFinish = false;
 		playSoundOnce = true;
@@ -1678,13 +1563,24 @@ public class PerishablePunchersMain
 		playSound3Once = true;
 		beggining = true;
 		playDieSound = false;
+		fireBallCollisionOnce = true;
+		p1CanFireBall = true;
+		p2CanFireBall = true;
+		p1CanHit = true;
+		p2CanHit = true;
+		renderFireBallP1 = false;
+		renderFireBallP2 = false;
+		notDoneP1 = false;
+		notDoneP2 = false;
+		playHaduken1Once = true;
+		playHaduken2Once = true;
+		vSync = true;
 
 		clickCount = 0;
 		clickCountMaps = 0;
 		Thread th1 = new Thread(run1);// multithreading
 		th1.start();
-		haduken = new HadukenSound();
-
+		
 		loop();
 
 	}
@@ -1700,8 +1596,8 @@ public class PerishablePunchersMain
 		@Override
 		public void run()
 		{
-			close = false;
 
+			close = false;
 			while (close == false)
 			{
 				// p1 fireball
@@ -1710,7 +1606,6 @@ public class PerishablePunchersMain
 					notDoneP1 = true;
 					if (playHaduken1Once && p1CanFireBall)
 					{
-						// Sound.play("res/Sounds/Haduken.wav");
 						Sound.play("Haduken.wav");
 						playHaduken1Once = false;
 					}
@@ -1723,7 +1618,6 @@ public class PerishablePunchersMain
 					} else if (fireBallX >= p2.getX() && notDoneP1)
 					{
 						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						// Sound.play("res/Sounds/Explosion.wav");
 						Sound.play("Explosion.wav");
 						playHaduken1Once = true;
 						p1CanFireBall = false;
@@ -1741,7 +1635,6 @@ public class PerishablePunchersMain
 					} else if (fireBallX <= p2.getX() && notDoneP1)
 					{
 						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						// Sound.play("res/Sounds/Explosion.wav");
 						Sound.play("Explosion.wav");
 						playHaduken1Once = true;
 						p1CanFireBall = false;
@@ -1758,8 +1651,6 @@ public class PerishablePunchersMain
 					notDoneP2 = true;
 					if (playHaduken2Once && p2CanFireBall)
 					{
-						// Sound.play("res/Sounds/Haduken.wav");
-						// Sound.play("Haduken.wav");
 						new Thread(haduken).start();
 						playHaduken2Once = false;
 					}
@@ -1773,7 +1664,6 @@ public class PerishablePunchersMain
 					} else if (fireBall2X <= p1.getX() && notDoneP2)
 					{
 						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						// Sound.play("res/Sounds/Explosion.wav");
 						Sound.play("Explosion.wav");
 						playHaduken2Once = true;
 						p2CanFireBall = false;
@@ -1790,7 +1680,6 @@ public class PerishablePunchersMain
 					} else if (fireBall2X >= p1.getX() && notDoneP2)
 					{
 						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						// Sound.play("res/Sounds/Explosion.wav");
 						Sound.play("Explosion.wav");
 						playHaduken2Once = true;
 						p2CanFireBall = false;
@@ -1825,13 +1714,10 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					// Sound.play("res/Sounds/ItDied.wav");
 					Sound.play("ItDied.wav");
-					// //m_itDied.play();
 					playSound2Once = false;
 					playDieSound = false;
 				}
-
 			}
 		}
 	};
