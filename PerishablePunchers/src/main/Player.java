@@ -22,8 +22,8 @@ import org.newdawn.slick.opengl.Texture;
 public class Player
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
-	private int x, w = 256, h = 256, speed, health;
-	private float y;
+	private int x, w = 256, h = 256, health;
+	private float y, speed;
 
 	/**
 	 * @param ex
@@ -35,7 +35,7 @@ public class Player
 	 * @param be
 	 * @param speed
 	 */
-	public Player(int ex, int wy, int speed)
+	public Player(int ex, int wy, float speed)
 	{
 		this.x = ex;
 		this.y = wy;
@@ -128,6 +128,11 @@ public class Player
 		{
 			x += delta * speed;
 		}
+	}
+
+	public void setSpeed(float speed)
+	{
+		this.speed = speed;
 	}
 
 	/**
