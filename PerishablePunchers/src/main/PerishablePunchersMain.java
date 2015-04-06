@@ -45,23 +45,22 @@ public class PerishablePunchersMain
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
 	private Runnable haduken;
-	private int gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
+	private int hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
 	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beggining, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
 			p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
-	private Texture parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt,
-			player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10,
-			player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD,
-			player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD,
-			player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD, sp, mp, spmp;
-
-	// TODO MAKE AI.
+	private Texture diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay,
+			menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25,
+			player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD,
+			player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD,
+			player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD, sp, mp, spmp;
 
 	private static long getTime()
 	{
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+
 	}
 
 	private static double getDelta()
@@ -539,7 +538,7 @@ public class PerishablePunchersMain
 		{
 			p1.draw(player1Kunch);
 
-		}else if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && p1CanHit)
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && p1CanHit)
 		{
 			p1.draw(player1);
 			p1.moveRight(delta);
@@ -1029,17 +1028,31 @@ public class PerishablePunchersMain
 
 	private void p2AI(Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
+		int dmg = 0;
+		if (hardness == 1)
+		{
+			dmg = 97;
+		} else if (hardness == 2)
+		{
+			dmg = 95;
+		} else if (hardness == 3)
+		{
+			dmg = 80;
+		} else
+		{
+			crash();
+		}
 		if (colliding())
 		{
-			if (p2CanHit)
+			if (p2CanHit && !oneDied)
 			{
 				int r1 = randomInt(1, 100);
-				if (r1 >= 95)
+				if (r1 >= dmg)
 				{
 					p1.setHealth(p1.getHealth() - 7);
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
 					Sound.play("Punch.wav");
-				} else if (r1 >= 90 && r1 < 95)
+				} else if (r1 >= dmg-5 && r1 < dmg)
 				{
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
 					Sound.play("Whoosh.wav");
@@ -1053,10 +1066,10 @@ public class PerishablePunchersMain
 			}
 		} else
 		{
-			if (p2CanHit)
+			if (p2CanHit && !oneDied)
 			{
-				int r2 = randomInt(0, 300);
-				if (r2 >=280)
+				int r2 = randomInt(0, 600);
+				if (r2 >= 590)
 				{
 					renderFireBallP2 = true;
 				} else
@@ -1078,7 +1091,19 @@ public class PerishablePunchersMain
 
 		if (!colliding())
 		{
-			p2.setSpeed(.01f);
+			if (hardness == 1)
+			{
+				p2.setSpeed(0.005f);
+			} else if (hardness == 2)
+			{
+				p2.setSpeed(0.01f);
+			} else if (hardness == 3)
+			{
+				p2.setSpeed(0.05f);
+			} else
+			{
+				crash();
+			}
 			if (p2.getX() > p1.getX())
 			{
 				if (gfxType.equals("8Bit"))
@@ -1286,13 +1311,11 @@ public class PerishablePunchersMain
 					if (p1.getX() + p1.getW() >= fireBallX - 128 && fireBallX - 128 + 512 >= p1.getX())
 					{
 						// dmg
-						System.out.println("DO DMGs P1");
 						p1.setHealth(p1.getHealth() - randomInt(25, 50));
 					}
 					if (p2.getX() + p2.getW() >= fireBallX - 128 && fireBallX - 128 + 512 >= p2.getX())
 					{
 						// dmg
-						System.out.println("DO DMGs P2");
 						p2.setHealth(p2.getHealth() - randomInt(25, 50));
 					}
 					Display.update();
@@ -1868,6 +1891,76 @@ public class PerishablePunchersMain
 		case 5:
 			gameModeChooser();
 			break;
+		case 6:
+			difficulty();
+			break;
+		}
+	}
+
+	private void difficulty()
+	{
+		renderTex(diff, 0, 0);
+
+		int x = Mouse.getX(); // will return the X coordinate on the Display.
+		int y = Mouse.getY(); // will return the Y coordinate on the Display.
+
+		if (Mouse.isButtonDown(0))
+		{
+			if (x >= 385 && x <= 895)// top
+			{
+				if (y <= 575 && y >= 415)
+				{
+					renderTex(easy, 0, 0);
+					gameMode = 1;
+					hardness = 1;
+					Display.update();
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					gameState = 4;
+				}
+			}
+
+			if (x >= 385 && x <= 895)// middle
+			{
+				if (y >= 240 && y <= 400)
+				{
+					renderTex(medium, 0, 0);
+					gameMode = 1;
+					hardness = 2;
+					Display.update();
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					gameState = 4;
+				}
+			}
+			if (x >= 385 && x <= 895)// bottom
+			{
+				if (y <= 225 && y >= 65)
+				{
+					renderTex(hard, 0, 0);
+					gameMode = 1;
+					hardness = 3;
+					Display.update();
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					gameState = 4;
+				}
+			}
 		}
 	}
 
@@ -1877,6 +1970,7 @@ public class PerishablePunchersMain
 
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
+
 		if (Mouse.isButtonDown(0))
 		{
 			if (x >= 400 && x <= 875)
@@ -1893,7 +1987,7 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					gameState = 4;
+					gameState = 6;
 				}
 			}
 
@@ -2020,6 +2114,14 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+			diff = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Diff.png"));
+
+			easy = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Easy.png"));
+
+			medium = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Medium.png"));
+
+			hard = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Hard.png"));
+
 			spmp = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/SPMP.png"));
 
 			mp = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/MP.png"));
