@@ -46,18 +46,18 @@ public class PerishablePunchersMain
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
 	private Runnable haduken;
-	private int gameState = 1, player1Tex, player2Tex, clickCount, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
+	private int gameState = 1, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, oldTime2 = 0, newTime2 = 0, dTime2;
 	private String gfxType;
-	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, paused, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
+	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beggining, stopper, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once;
 	private boolean fireBallCollisionOnce = true, p1CanFireBall = true, p2CanFireBall = true, p1CanHit = true, p2CanHit = true, renderFireBallP1 = false, renderFireBallP2 = false, notDoneP1 = false, notDoneP2 = false, playHaduken1Once = true,
 			playHaduken2Once = true;
 	private static long lastFrame;
-	private Texture fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, backgroundHD, gfx, gfx8Bit, gfxHD, background, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped,
-			player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85,
-			player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD,
-			player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD,
-			player4KunchHD, explosion, explosionHD;
+	private Texture parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt,
+			player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10,
+			player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD,
+			player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD,
+			player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD;
 
 	// TODO Make orbs collide, if they collide then it will spawn an explosion
 	// that lasts for about .4 seconds, if a player is inside the size of the
@@ -199,14 +199,40 @@ public class PerishablePunchersMain
 		// remember, rendered things will go ontop of another
 		if (gfxType.equals("8Bit"))
 		{
-			renderTex(background, 0, 0);
+			if (map == 1)
+			{
+				renderTex(parkBG, 0, 0);
+			} else if (map == 2)
+			{
+				renderTex(roofBG, 0, 0);
+			} else if (map == 3)
+			{
+				renderTex(officeBG, 0, 0);
+			} else if (map == 4)
+			{
+				renderTex(sewerBG, 0, 0);
+			}
+
 			renderHealthLeft();
 			renderHealthRight();
 			renderItDied();
 			renderFinishIt();
 		} else if (gfxType.equals("HD"))
 		{
-			renderTex(backgroundHD, 0, 0);
+			if (map == 1)
+			{
+				renderTex(parkBGHD, 0, 0);
+			} else if (map == 2)
+			{
+				renderTex(roofBGHD, 0, 0);
+			} else if (map == 3)
+			{
+				renderTex(officeBGHD, 0, 0);
+			} else if (map == 4)
+			{
+				renderTex(sewerBGHD, 0, 0);
+			}
+
 			renderHealthLeft();
 			renderHealthRight();
 			renderItDied();
@@ -256,7 +282,11 @@ public class PerishablePunchersMain
 				{
 				} else
 				{
-					reset();
+					// reset();
+					Display.destroy();
+					close = true;
+					new PerishablePunchersMain().init();
+					System.exit(0);
 				}
 			}
 
@@ -946,7 +976,13 @@ public class PerishablePunchersMain
 				if (fireBallX != 0 && fireBallCollisionOnce)
 				{
 					System.out.println("FIREBALLS TOUCHING");
-					renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
+					if (gfxType.equals("HD"))
+					{
+						renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
+					} else if (gfxType.equals("8Bit"))
+					{
+						renderTex(explosion, fireBallX - 128, fireBallY - 168);
+					}
 					notDoneP1 = false;
 					notDoneP2 = false;
 
@@ -995,7 +1031,6 @@ public class PerishablePunchersMain
 		playDieSound = false;
 		p1CanFireBall = true;
 		p2CanFireBall = true;
-		paused = false;
 		notDoneP1 = false;
 		fireBallCollisionOnce = true;
 
@@ -1003,7 +1038,6 @@ public class PerishablePunchersMain
 
 	private void menu()
 	{
-		paused = true;
 		renderTex(menu, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
@@ -1016,6 +1050,7 @@ public class PerishablePunchersMain
 			gameState = 0;
 			player1Tex = 1;
 			player2Tex = 2;
+			map = 1;
 			Sound.play("Gong.wav");
 
 		}
@@ -1038,7 +1073,7 @@ public class PerishablePunchersMain
 
 					if (beggining)
 					{
-						gameState = 3;
+						gameState = 4;
 						beggining = false;
 					} else
 					{
@@ -1071,14 +1106,12 @@ public class PerishablePunchersMain
 
 	private void play()
 	{
-		paused = false;
 		render();
 		gamePlay();
 	}
 
 	private void gfx()
 	{
-		paused = true;
 		renderTex(gfx, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
@@ -1179,7 +1212,6 @@ public class PerishablePunchersMain
 			glEnd();
 		}
 
-		paused = true;
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
@@ -1336,6 +1368,90 @@ public class PerishablePunchersMain
 		case 3:
 			charSelect();
 			return;
+
+		case 4:
+			maps();
+			return;
+		}
+	}
+
+	private void maps()
+	{
+		renderTex(maps, 0, 0);
+		int x = Mouse.getX(); // will return the X coordinate on the Display.
+		int y = Mouse.getY(); // will return the Y coordinate on the Display.
+		// System.out.println("X: " + x + "\nY: " + y);
+		if (clickCountMaps >= 1)
+		{
+			gameState = 3;
+		}
+
+		if (Mouse.isButtonDown(0))
+		{
+			if (x >= 85 && x <= 570)// top left guy
+			{
+				if (y <= 630 && y >= 360 && clickCount == 0)
+				{
+					clickCountMaps++;
+					map = 1;
+					try
+					{
+						Thread.sleep(100);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (x >= 85 && x <= 570)// bottom left guy
+			{
+				if (y >= 65 && y <= 340 && clickCount == 0)
+				{
+					clickCountMaps++;
+					map = 2;
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (x >= 700 && x <= 1195)// top right guy
+			{
+				if (y >= 360 && y <= 630 && clickCount == 0)
+				{
+					clickCountMaps++;
+					map = 3;
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (x >= 700 && x <= 1195)// bottom right guy
+			{
+				if (y >= 65 && y <= 340 && clickCount == 0)
+				{
+					clickCountMaps++;
+					map = 4;
+					try
+					{
+						Thread.sleep(250);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+
 		}
 	}
 
@@ -1367,6 +1483,23 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+			maps = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Maps.png"));
+
+			parkBG = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/BG.png"));
+
+			parkBGHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/BGHD.png"));
+
+			roofBG = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Roof.png"));
+
+			roofBGHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/RoofHD.png"));
+
+			officeBG = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Office.png"));
+
+			officeBGHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/OfficeHD.png"));
+
+			sewerBG = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Sewer.png"));
+
+			sewerBGHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/SewerHD.png"));
 
 			explosion = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Explosion.png"));
 
@@ -1391,10 +1524,6 @@ public class PerishablePunchersMain
 			itDied = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/ItDied.png"));
 
 			FinishIt = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FinishIt.png"));
-
-			background = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/BG.png"));
-
-			backgroundHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/BGHD.png"));
 
 			menu = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Menu.png"));
 
@@ -1542,7 +1671,6 @@ public class PerishablePunchersMain
 		// init vars
 		lastFrame = getTime();
 		stopper = false;
-		paused = true;
 		oneDied = false;
 		oneToFinish = false;
 		playSoundOnce = true;
@@ -1552,6 +1680,7 @@ public class PerishablePunchersMain
 		playDieSound = false;
 
 		clickCount = 0;
+		clickCountMaps = 0;
 		Thread th1 = new Thread(run1);// multithreading
 		th1.start();
 		haduken = new HadukenSound();
@@ -1582,8 +1711,7 @@ public class PerishablePunchersMain
 					if (playHaduken1Once && p1CanFireBall)
 					{
 						// Sound.play("res/Sounds/Haduken.wav");
-						// Sound.play("Haduken.wav");
-						new Thread(haduken).start();
+						Sound.play("Haduken.wav");
 						playHaduken1Once = false;
 					}
 				}

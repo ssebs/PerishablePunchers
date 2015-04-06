@@ -8,7 +8,7 @@ public class HadukenSound implements Runnable
 {
 	public HadukenSound()
 	{
-
+		
 	}
 
 	@Override
