@@ -51,11 +51,12 @@ public class PerishablePunchersMain
 	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
 			p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
-	private Texture diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay,
-			menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25,
-			player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70, player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD,
-			player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3, player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD,
-			player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion, explosionHD, sp, mp, spmp;
+	private Texture dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD,
+			fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
+			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
+			player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3,
+			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
+			explosionHD, sp, mp, spmp;
 
 	// TODO: add dargon character, only if hovered on char select screen on
 	// corner, render dargon there when hovered
@@ -793,6 +794,20 @@ public class PerishablePunchersMain
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
 		} else
+		// 5 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 5)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 5)
+		{
+			pollInput(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 5)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 5)
+		{
+			pollInput(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else
 		// 1 n 2 & 2 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
 		{
@@ -877,6 +892,63 @@ public class PerishablePunchersMain
 		{
 			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 		} else
+
+		// 1 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 5)
+		{
+			pollInput(player1, player1Walk, player1Kunch, player1Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 5)
+		{
+			pollInput(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 1)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, player1, player1Walk, player1Kunch, player1Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 1)
+		{
+			pollInput(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else
+		// 2 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 5)
+		{
+			pollInput(player2, player2Walk, player2Kunch, player2Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 5)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 2)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, player2, player2Walk, player2Kunch, player2Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 2)
+		{
+			pollInput(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		} else
+		// 3 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 5)
+		{
+			pollInput(player3, player3Walk, player3Kunch, player3Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 5)
+		{
+			pollInput(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 3)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 3)
+		{
+			pollInput(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		} else
+		// 4 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 5)
+		{
+			pollInput(player4, player4Walk, player4Kunch, player4Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 5)
+		{
+			pollInput(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 4)
+		{
+			pollInput(dargon, dargonWalk, dargonKunch, dargonFlipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 4)
+		{
+			pollInput(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		} else
 		{
 			crash();
 		}
@@ -884,14 +956,11 @@ public class PerishablePunchersMain
 
 	private void inputSP()
 	{
+		// System.out.println("INPUTSP\nP1: " + player1Tex + "\nP2: " +
+		// player2Tex);
+
 		// 1 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
-		{
-			pollInputSP(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
-		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
-		{
-			pollInputSP(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
-		} else if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
 		{
 			pollInputSP(player1, player1Walk, player1Kunch, player1Flipped, player1, player1Walk, player1Kunch, player1Flipped);
 		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 1)
@@ -905,21 +974,9 @@ public class PerishablePunchersMain
 		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
 		{
 			pollInputSP(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
-		} else if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 2)
-		{
-			pollInputSP(player2, player2Walk, player2Kunch, player2Flipped, player2, player2Walk, player2Kunch, player2Flipped);
-		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 2)
-		{
-			pollInputSP(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 		} else
 		// 3 n 3
 		if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
-		{
-			pollInputSP(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
-		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
-		{
-			pollInputSP(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
-		} else if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 3)
 		{
 			pollInputSP(player3, player3Walk, player3Kunch, player3Flipped, player3, player3Walk, player3Kunch, player3Flipped);
 		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 3)
@@ -933,12 +990,16 @@ public class PerishablePunchersMain
 		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
 		{
 			pollInputSP(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
-		} else if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 4)
+		} else
+		// 5 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 5)
 		{
-			pollInputSP(player4, player4Walk, player4Kunch, player4Flipped, player4, player4Walk, player4Kunch, player4Flipped);
-		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 4)
+			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+			//System.out.println("5 n 5, 8 bit");
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 5)
 		{
-			pollInputSP(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+			pollInputSP(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+			//System.out.println("5 n 5, HD");
 		} else
 		// 1 n 2 & 2 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
@@ -1024,7 +1085,64 @@ public class PerishablePunchersMain
 		{
 			pollInputSP(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
 		} else
+		// 1 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 5)
 		{
+			pollInputSP(player1, player1Walk, player1Kunch, player1Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 1 && player2Tex == 5)
+		{
+			pollInputSP(player1HD, player1WalkHD, player1KunchHD, player1FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 1)
+		{
+			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, player1, player1Walk, player1Kunch, player1Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 1)
+		{
+			pollInputSP(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player1HD, player1WalkHD, player1KunchHD, player1FlippedHD);
+		} else
+		// 2 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 2 && player2Tex == 5)
+		{
+			pollInputSP(player2, player2Walk, player2Kunch, player2Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 2 && player2Tex == 5)
+		{
+			pollInputSP(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 2)
+		{
+			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, player2, player2Walk, player2Kunch, player2Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 2)
+		{
+			pollInputSP(player2HD, player2WalkHD, player2KunchHD, player2FlippedHD, player2HD, player2WalkHD, player2KunchHD, player2FlippedHD);
+		} else
+		// 3 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 3 && player2Tex == 5)
+		{
+			pollInputSP(player3, player3Walk, player3Kunch, player3Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 3 && player2Tex == 5)
+		{
+			pollInputSP(player3HD, player3WalkHD, player3KunchHD, player3FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 3)
+		{
+			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, player3, player3Walk, player3Kunch, player3Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 3)
+		{
+			pollInputSP(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player3HD, player3WalkHD, player3KunchHD, player3FlippedHD);
+		} else
+		// 4 n 5
+		if (gfxType.equals("8Bit") && player1Tex == 4 && player2Tex == 5)
+		{
+			pollInputSP(player4, player4Walk, player4Kunch, player4Flipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
+		} else if (gfxType.equals("HD") && player1Tex == 4 && player2Tex == 5)
+		{
+			pollInputSP(player4HD, player4WalkHD, player4KunchHD, player4FlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+		} else if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 4)
+		{
+			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, player4, player4Walk, player4Kunch, player4Flipped);
+		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 4)
+		{
+			pollInputSP(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, player4HD, player4WalkHD, player4KunchHD, player4FlippedHD);
+		} else
+		{
+			System.out.println("P1: " + player1Tex + "\nP2: " + player2Tex);
 			crash();
 		}
 	}
@@ -1045,6 +1163,8 @@ public class PerishablePunchersMain
 		{
 			crash();
 		}
+		//System.out.println("P1: " + player1Tex + "\nP2: " + player2Tex);
+
 		if (colliding())
 		{
 			if (p2CanHit && !oneDied)
@@ -1080,7 +1200,25 @@ public class PerishablePunchersMain
 					renderFireBallP2 = false;
 				}
 
-				moveAI(player2, p2Walk, player2Kunch, player2Flipped);
+				if (player2Tex == 5)
+				{
+					if (gfxType.equals("8Bit"))
+					{
+						moveAI(dargon, dargonWalk, dargonKunch, dargonFlipped);
+					} else
+					{
+						moveAI(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+					}
+				}
+
+				if (player1Tex == 5 && player2Tex == 5)
+				{
+					moveAI(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
+				} else
+				{
+					moveAI(player2, p2Walk, player2Kunch, player2Flipped);
+				}
+
 			} else
 			{
 				renderTex(p2Walk, p2.getX(), (int) p2.getY());
@@ -1784,9 +1922,38 @@ public class PerishablePunchersMain
 		{
 			gameState = 2;
 		}
+		// easter egg
 
 		if (Mouse.isButtonDown(0))
 		{
+			// easter egg
+			if (x <= 85)
+			{
+				if (y >= 720 - 185 && clickCount == 0)
+				{
+					clickCount++;
+					player1Tex = 5;
+					try
+					{
+						Thread.sleep(100);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				} else if (y >= 720 - 185 && clickCount == 1)
+				{
+					clickCount++;
+					player2Tex = 5;
+					try
+					{
+						Thread.sleep(100);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+
 			if (x >= 220 && x <= 425)// top left guy
 			{
 				if (y <= 620 && y >= 370 && clickCount == 0)
@@ -1902,6 +2069,13 @@ public class PerishablePunchersMain
 						e.printStackTrace();
 					}
 				}
+			}
+		}
+		if (x <= 85)
+		{
+			if (y >= 720 - 185)
+			{
+				renderTex(dargonHead, 0, 0);
 			}
 		}
 	}
@@ -2338,6 +2512,27 @@ public class PerishablePunchersMain
 			player2FlippedHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/HD/Player2/Player2FlippedHD.png"));
 
 			player2KunchHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/HD/Player2/Player2KunchHD.png"));
+
+			// dargon textures
+			dargonHead = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonHead.png"));
+
+			// 8bit
+			dargon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/Dargon.png"));
+
+			dargonWalk = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonWalk.png"));
+
+			dargonFlipped = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonFlipped.png"));
+
+			dargonKunch = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonKunch.png"));
+
+			// hd
+			dargonHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonHD.png"));
+
+			dargonWalkHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonWalkHD.png"));
+
+			dargonFlippedHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonFlippedHD.png"));
+
+			dargonKunchHD = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Dargon/DargonKunchHD.png"));
 
 		} catch (IOException e)
 		{
