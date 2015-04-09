@@ -28,6 +28,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -44,12 +45,11 @@ public class PerishablePunchersMain
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
-	private Runnable haduken;
 	private int hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
-	private boolean vSync, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce,
-			p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
+	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound, playDieSound, playSoundOnce, playSound2Once, playSound3Once,
+			fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
 	private Texture dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD,
 			fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
@@ -58,8 +58,9 @@ public class PerishablePunchersMain
 			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
 			explosionHD, sp, mp, spmp;
 
-	// TODO: add dargon character, only if hovered on char select screen on
-	// corner, render dargon there when hovered
+	// private AL_Sound punchSound;
+
+	// TODO: add flawless victory, dargon sound, gong sound in s
 
 	private static long getTime()
 	{
@@ -92,6 +93,7 @@ public class PerishablePunchersMain
 		if (oneDied)
 		{
 			renderTex(itDied, WIDTH / 2 - 260, 64);
+
 		}
 	}
 
@@ -269,23 +271,6 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_V)
-			{
-				if (Keyboard.getEventKeyState())
-				{
-				} else
-				{
-					if (vSync)
-					{
-						Display.setVSyncEnabled(false);
-						vSync = !vSync;
-					} else
-					{
-						Display.setVSyncEnabled(true);
-						vSync = !vSync;
-					}
-				}
-			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_R)
 			{
 				if (Keyboard.getEventKeyState())
@@ -333,10 +318,13 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p1.setHealth(p1.getHealth() - 5);
-						Sound.play("Punch.wav");
+						// Sound.play("Punch.wav");
+						// punchSound.execute();
+						AL_Punch.execute();
 					} else
 					{
-						Sound.play("Whoosh.wav");
+						// Sound.play("Whoosh.wav");
+						AL_Whoosh.execute();
 					}
 				}
 			}
@@ -351,10 +339,13 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						Sound.play("Punch.wav");
+						// Sound.play("Punch.wav");
+						// punchSound.execute();
+						AL_Punch.execute();
 					} else
 					{
-						Sound.play("Whoosh.wav");
+						// Sound.play("Whoosh.wav");
+						AL_Whoosh.execute();
 					}
 				}
 			}
@@ -435,23 +426,6 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_V)
-			{
-				if (Keyboard.getEventKeyState())
-				{
-				} else
-				{
-					if (vSync)
-					{
-						Display.setVSyncEnabled(false);
-						vSync = !vSync;
-					} else
-					{
-						Display.setVSyncEnabled(true);
-						vSync = !vSync;
-					}
-				}
-			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_R)
 			{
 				if (Keyboard.getEventKeyState())
@@ -487,10 +461,12 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						Sound.play("Punch.wav");
+						//Sound.play("Punch.wav");
+						AL_Punch.execute();
 					} else
 					{
-						Sound.play("Whoosh.wav");
+						// Sound.play("Whoosh.wav");
+						AL_Whoosh.execute();
 					}
 				}
 			}
@@ -516,10 +492,12 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						Sound.play("Punch.wav");
+					//	Sound.play("Punch.wav");
+						AL_Punch.execute();
 					} else
 					{
-						Sound.play("Whoosh.wav");
+						// Sound.play("Whoosh.wav");
+						AL_Whoosh.execute();
 					}
 				}
 			}
@@ -609,7 +587,8 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						Sound.play("Kombo.wav");
+						// Sound.play("Kombo.wav");
+						AL_Kombo.execute();
 						dTime = 0;
 						combo1WASDNum = 0;
 					}
@@ -659,7 +638,8 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p1.setHealth(p1.getHealth() - 5);
-						Sound.play("Kombo.wav");
+						// Sound.play("Kombo.wav");
+						AL_Kombo.execute();
 						dTime2 = 0;
 						combo1ArrowNum = 0;
 					}
@@ -695,7 +675,8 @@ public class PerishablePunchersMain
 				{
 					if (colliding() && playSound3Once)
 					{
-						Sound.play("TeaBag.wav");
+						// Sound.play("TeaBag.wav");
+						AL_Teabag.execute();
 						playSound3Once = false;
 					}
 				}
@@ -715,7 +696,8 @@ public class PerishablePunchersMain
 				{
 					if (colliding() && playSound3Once)
 					{
-						Sound.play("TeaBag.wav");
+						// Sound.play("TeaBag.wav");
+						AL_Teabag.execute();
 						playSound3Once = false;
 					}
 				}
@@ -995,11 +977,11 @@ public class PerishablePunchersMain
 		if (gfxType.equals("8Bit") && player1Tex == 5 && player2Tex == 5)
 		{
 			pollInputSP(dargon, dargonWalk, dargonKunch, dargonFlipped, dargon, dargonWalk, dargonKunch, dargonFlipped);
-			//System.out.println("5 n 5, 8 bit");
+			// System.out.println("5 n 5, 8 bit");
 		} else if (gfxType.equals("HD") && player1Tex == 5 && player2Tex == 5)
 		{
 			pollInputSP(dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD, dargonHD, dargonWalkHD, dargonKunchHD, dargonFlippedHD);
-			//System.out.println("5 n 5, HD");
+			// System.out.println("5 n 5, HD");
 		} else
 		// 1 n 2 & 2 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 2)
@@ -1163,7 +1145,7 @@ public class PerishablePunchersMain
 		{
 			crash();
 		}
-		//System.out.println("P1: " + player1Tex + "\nP2: " + player2Tex);
+		// System.out.println("P1: " + player1Tex + "\nP2: " + player2Tex);
 
 		if (colliding())
 		{
@@ -1174,11 +1156,13 @@ public class PerishablePunchersMain
 				{
 					p1.setHealth(p1.getHealth() - 7);
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
-					Sound.play("Punch.wav");
+					//Sound.play("Punch.wav");
+					AL_Punch.execute();
 				} else if (r1 >= dmg - 5 && r1 < dmg)
 				{
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
-					Sound.play("Whoosh.wav");
+					// Sound.play("Whoosh.wav");
+					AL_Whoosh.execute();
 				} else
 				{
 					renderTex(p2Walk, p2.getX(), (int) p2.getY());
@@ -1294,7 +1278,8 @@ public class PerishablePunchersMain
 			finishingMoveArrow();
 			if (playSoundOnce)
 			{
-				Sound.play("FinishIt.wav");
+				// Sound.play("FinishIt.wav");
+				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
 			// P1 DIED
@@ -1321,7 +1306,8 @@ public class PerishablePunchersMain
 			finishingMoveWASD();
 			if (playSoundOnce)
 			{
-				Sound.play("FinishIt.wav");
+				// Sound.play("FinishIt.wav");
+				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
 			// P2 DIED
@@ -1440,11 +1426,13 @@ public class PerishablePunchersMain
 					if (gfxType.equals("HD"))
 					{
 						renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
+						AL_Explosion.execute();
 					} else if (gfxType.equals("8Bit"))
 					{
 						renderTex(explosion, fireBallX - 128, fireBallY - 168);
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
+						AL_Explosion.execute();
 					}
 					notDoneP1 = false;
 					notDoneP2 = false;
@@ -1499,7 +1487,8 @@ public class PerishablePunchersMain
 			finishingMoveArrow();
 			if (playSoundOnce)
 			{
-				Sound.play("FinishIt.wav");
+				// Sound.play("FinishIt.wav");
+				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
 			// P1 DIED
@@ -1526,7 +1515,8 @@ public class PerishablePunchersMain
 			finishingMoveWASD();
 			if (playSoundOnce)
 			{
-				Sound.play("FinishIt.wav");
+				// Sound.play("FinishIt.wav");
+				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
 			// P2 DIED
@@ -1717,7 +1707,9 @@ public class PerishablePunchersMain
 			player2Tex = 2;
 			map = 1;
 			gameMode = 0;
-			Sound.play("Gong.wav");
+			// Sound.play("Gong.wav");
+			AL_Gong.execute();
+
 		}
 
 		if (Mouse.isButtonDown(0))
@@ -1815,7 +1807,8 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfx8Bit, 0, 0);
 					gfxType = "8Bit";
-					Sound.play("Gong.wav");
+					// Sound.play("Gong.wav");
+					AL_Gong.execute();
 
 					Display.update();
 					try
@@ -1834,8 +1827,8 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfxHD, 0, 0);
 					gfxType = "HD";
-					Sound.play("Gong.wav");
-
+					// Sound.play("Gong.wav");
+					AL_Gong.execute();
 					Display.update();
 					try
 					{
@@ -2330,8 +2323,10 @@ public class PerishablePunchersMain
 
 			// game rules
 			gameStates();
+			Display.sync(60);
 			Display.update();// updates screen
 		}
+		AL.destroy();
 		Display.destroy();
 		close = true;
 	}
@@ -2582,10 +2577,19 @@ public class PerishablePunchersMain
 		notDoneP2 = false;
 		playHaduken1Once = true;
 		playHaduken2Once = true;
-		vSync = true;
+		playFlawlessSound = true;
 
 		clickCount = 0;
 		clickCountMaps = 0;
+		// punchSound = new AL_Sound("Punch.wav");
+		try
+		{
+			AL.create();
+		} catch (LWJGLException le)
+		{
+			le.printStackTrace();
+			return;
+		}
 		Thread th1 = new Thread(run1);// multithreading
 		th1.start();
 
@@ -2614,7 +2618,8 @@ public class PerishablePunchersMain
 					notDoneP1 = true;
 					if (playHaduken1Once && p1CanFireBall)
 					{
-						Sound.play("Haduken.wav");
+						// Sound.play("Haduken.wav");
+						AL_Haduken.execute();
 						playHaduken1Once = false;
 					}
 				}
@@ -2626,7 +2631,8 @@ public class PerishablePunchersMain
 					} else if (fireBallX >= p2.getX() && notDoneP1)
 					{
 						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
+						AL_Explosion.execute();
 						playHaduken1Once = true;
 						p1CanFireBall = false;
 						notDoneP1 = false;
@@ -2643,7 +2649,7 @@ public class PerishablePunchersMain
 					} else if (fireBallX <= p2.getX() && notDoneP1)
 					{
 						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
 						playHaduken1Once = true;
 						p1CanFireBall = false;
 						notDoneP1 = false;
@@ -2659,7 +2665,8 @@ public class PerishablePunchersMain
 					notDoneP2 = true;
 					if (playHaduken2Once && p2CanFireBall)
 					{
-						new Thread(haduken).start();
+						// Sound.play("Haduken.wav");
+						AL_Haduken.execute();
 						playHaduken2Once = false;
 					}
 				}
@@ -2672,7 +2679,8 @@ public class PerishablePunchersMain
 					} else if (fireBall2X <= p1.getX() && notDoneP2)
 					{
 						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
+						AL_Explosion.execute();
 						playHaduken2Once = true;
 						p2CanFireBall = false;
 						notDoneP2 = false;
@@ -2688,7 +2696,8 @@ public class PerishablePunchersMain
 					} else if (fireBall2X >= p1.getX() && notDoneP2)
 					{
 						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						Sound.play("Explosion.wav");
+						// Sound.play("Explosion.wav");
+						AL_Explosion.execute();
 						playHaduken2Once = true;
 						p2CanFireBall = false;
 						notDoneP2 = false;
@@ -2713,6 +2722,7 @@ public class PerishablePunchersMain
 				{
 					e.printStackTrace();
 				}
+
 				if (playSound2Once && playDieSound)
 				{
 					try
@@ -2722,11 +2732,39 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					Sound.play("ItDied.wav");
+					// Sound.play("ItDied.wav");
+					AL_ItDied.execute();
 					playSound2Once = false;
 					playDieSound = false;
 				}
+				if (oneDied && p1.getHealth() == p1.getMaxHealth() && playFlawlessSound)
+				{
+					try
+					{
+						Thread.sleep(1200);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					// Sound.play("UnscathedConquest.wav");
+					AL_UC.execute();
+					playFlawlessSound = false;
+				}
+				if (oneDied && p2.getHealth() == p2.getMaxHealth() && playFlawlessSound)
+				{
+					try
+					{
+						Thread.sleep(1200);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					// Sound.play("UnscathedConquest.wav");
+					AL_UC.execute();
+					playFlawlessSound = false;
+				}
 			}
+			AL.destroy();
 		}
 	};
 }

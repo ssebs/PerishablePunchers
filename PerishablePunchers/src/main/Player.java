@@ -22,7 +22,7 @@ import org.newdawn.slick.opengl.Texture;
 public class Player
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
-	private int x, w = 256, h = 256, health;
+	private int x, w = 256, h = 256, health, maxHealth;
 	private float y, speed;
 
 	/**
@@ -40,7 +40,13 @@ public class Player
 		this.x = ex;
 		this.y = wy;
 		this.speed = speed;
-		setHealth(100);
+		maxHealth = 100;
+		setHealth(maxHealth);
+	}
+
+	public int getMaxHealth()
+	{
+		return maxHealth;
 	}
 
 	/**
@@ -103,7 +109,8 @@ public class Player
 						e.printStackTrace();
 					}
 				}
-				Sound.play("Jump.wav");
+				// Sound.play("Jump.wav");
+				AL_Jump.execute();
 			}
 		}
 	}
