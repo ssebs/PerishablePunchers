@@ -40,7 +40,12 @@ public class Player
 		this.x = ex;
 		this.y = wy;
 		this.speed = speed;
-		maxHealth = 100;
+		maxHealth = 100
+				
+				
+				
+				
+				;
 		setHealth(maxHealth);
 	}
 
@@ -82,7 +87,8 @@ public class Player
 	{
 		if (y < HEIGHT - h)
 		{
-			y += 0.625f * delta;
+			// y += 0.63f * delta;
+			y += 0.9f * delta;
 		} else
 		{
 			y = HEIGHT - h + 1;
@@ -103,7 +109,7 @@ public class Player
 					y -= 2 * speed * 20;
 					try
 					{
-						Thread.sleep(15);
+						Thread.sleep(5);
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();

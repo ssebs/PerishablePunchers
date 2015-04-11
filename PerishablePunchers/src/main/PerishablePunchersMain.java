@@ -45,22 +45,19 @@ public class PerishablePunchersMain
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
 	private Player p1, p2;
-	private int hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0, fireBallType = 0, fireBallType2 = 0;
+	private int p1Tiq = 0, p2Tiq = 0, hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0,
+			fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
-	private boolean renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound, playDieSound, playSoundOnce, playSound2Once, playSound3Once,
-			fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
+	private boolean renderP1Shield, renderP2Shield, isP1Blocking, isP2Blocking, playFlawlessSoundOnce, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound,
+			playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
-	private Texture dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG, sewerBGHD,
-			fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
-			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
+	private Texture shield, dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG,
+			sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped,
+			player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
 			player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3,
 			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
 			explosionHD, sp, mp, spmp;
-
-	// private AL_Sound punchSound;
-
-	// TODO: add flawless victory, dargon sound, gong sound in s
 
 	private static long getTime()
 	{
@@ -134,7 +131,6 @@ public class PerishablePunchersMain
 	private void renderHealthRight()
 	{
 		int health = p2.getHealth();
-		// System.out.println("P2 Health: " + health);
 		if (health > 85)
 		{
 			renderTex(player2HealthFull, 640, 0);
@@ -278,6 +274,7 @@ public class PerishablePunchersMain
 				} else
 				{
 					Display.destroy();
+					AL.destroy();
 					close = true;
 					new PerishablePunchersMain().init();
 					System.exit(0);
@@ -317,13 +314,17 @@ public class PerishablePunchersMain
 				{
 					if (colliding())
 					{
-						p1.setHealth(p1.getHealth() - 5);
-						// Sound.play("Punch.wav");
-						// punchSound.execute();
+						if (!isP1Blocking)
+						{
+							p1.setHealth(p1.getHealth() - 5);
+						} else
+						{
+							p1.setHealth(p1.getHealth() - 2);
+							isP1Blocking = false;
+						}
 						AL_Punch.execute();
 					} else
 					{
-						// Sound.play("Whoosh.wav");
 						AL_Whoosh.execute();
 					}
 				}
@@ -338,13 +339,17 @@ public class PerishablePunchersMain
 				{
 					if (colliding())
 					{
-						p2.setHealth(p2.getHealth() - 5);
-						// Sound.play("Punch.wav");
-						// punchSound.execute();
+						if (!isP2Blocking)
+						{
+							p2.setHealth(p2.getHealth() - 5);
+						} else
+						{
+							p2.setHealth(p2.getHealth() - 2);
+							isP2Blocking = false;
+						}
 						AL_Punch.execute();
 					} else
 					{
-						// Sound.play("Whoosh.wav");
 						AL_Whoosh.execute();
 					}
 				}
@@ -392,6 +397,38 @@ public class PerishablePunchersMain
 
 		}
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_S))
+		{
+			isP1Blocking = true;
+			renderP1Shield = true;
+		}
+		if (p1Tiq < 75 && renderP1Shield)
+		{
+			renderTex(shield, p1.getX(), (int) p1.getY());
+			isP1Blocking = true;
+		} else
+		{
+			p1Tiq = 0;
+			renderP1Shield = false;
+			isP1Blocking = false;
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+		{
+			isP2Blocking = true;
+			renderP2Shield = true;
+		}
+		if (p2Tiq < 75 && renderP2Shield)
+		{
+			renderTex(shield, p2.getX(), (int) p2.getY());
+			isP2Blocking = true;
+		} else
+		{
+			p2Tiq = 0;
+			renderP2Shield = false;
+			isP2Blocking = false;
+		}
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 		{
 			gameState = 1;
@@ -433,6 +470,7 @@ public class PerishablePunchersMain
 				} else
 				{
 					Display.destroy();
+					AL.destroy();
 					close = true;
 					new PerishablePunchersMain().init();
 					System.exit(0);
@@ -460,12 +498,17 @@ public class PerishablePunchersMain
 				{
 					if (colliding())
 					{
-						p2.setHealth(p2.getHealth() - 5);
-						//Sound.play("Punch.wav");
+						if (!isP2Blocking)
+						{
+							p2.setHealth(p2.getHealth() - 5);
+						} else
+						{
+							p2.setHealth(p2.getHealth() - 2);
+							isP2Blocking = false;
+						}
 						AL_Punch.execute();
 					} else
 					{
-						// Sound.play("Whoosh.wav");
 						AL_Whoosh.execute();
 					}
 				}
@@ -491,12 +534,17 @@ public class PerishablePunchersMain
 				{
 					if (colliding())
 					{
-						p2.setHealth(p2.getHealth() - 5);
-					//	Sound.play("Punch.wav");
+						if (!isP2Blocking)
+						{
+							p2.setHealth(p2.getHealth() - 5);
+						} else
+						{
+							p2.setHealth(p2.getHealth() - 2);
+							isP2Blocking = false;
+						}
 						AL_Punch.execute();
 					} else
 					{
-						// Sound.play("Whoosh.wav");
 						AL_Whoosh.execute();
 					}
 				}
@@ -587,7 +635,6 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p2.setHealth(p2.getHealth() - 5);
-						// Sound.play("Kombo.wav");
 						AL_Kombo.execute();
 						dTime = 0;
 						combo1WASDNum = 0;
@@ -638,7 +685,6 @@ public class PerishablePunchersMain
 					if (colliding())
 					{
 						p1.setHealth(p1.getHealth() - 5);
-						// Sound.play("Kombo.wav");
 						AL_Kombo.execute();
 						dTime2 = 0;
 						combo1ArrowNum = 0;
@@ -675,7 +721,6 @@ public class PerishablePunchersMain
 				{
 					if (colliding() && playSound3Once)
 					{
-						// Sound.play("TeaBag.wav");
 						AL_Teabag.execute();
 						playSound3Once = false;
 					}
@@ -696,7 +741,6 @@ public class PerishablePunchersMain
 				{
 					if (colliding() && playSound3Once)
 					{
-						// Sound.play("TeaBag.wav");
 						AL_Teabag.execute();
 						playSound3Once = false;
 					}
@@ -938,9 +982,6 @@ public class PerishablePunchersMain
 
 	private void inputSP()
 	{
-		// System.out.println("INPUTSP\nP1: " + player1Tex + "\nP2: " +
-		// player2Tex);
-
 		// 1 n 1
 		if (gfxType.equals("8Bit") && player1Tex == 1 && player2Tex == 1)
 		{
@@ -1145,7 +1186,6 @@ public class PerishablePunchersMain
 		{
 			crash();
 		}
-		// System.out.println("P1: " + player1Tex + "\nP2: " + player2Tex);
 
 		if (colliding())
 		{
@@ -1156,12 +1196,10 @@ public class PerishablePunchersMain
 				{
 					p1.setHealth(p1.getHealth() - 7);
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
-					//Sound.play("Punch.wav");
 					AL_Punch.execute();
 				} else if (r1 >= dmg - 5 && r1 < dmg)
 				{
 					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
-					// Sound.play("Whoosh.wav");
 					AL_Whoosh.execute();
 				} else
 				{
@@ -1278,7 +1316,6 @@ public class PerishablePunchersMain
 			finishingMoveArrow();
 			if (playSoundOnce)
 			{
-				// Sound.play("FinishIt.wav");
 				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
@@ -1306,7 +1343,6 @@ public class PerishablePunchersMain
 			finishingMoveWASD();
 			if (playSoundOnce)
 			{
-				// Sound.play("FinishIt.wav");
 				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
@@ -1421,17 +1457,17 @@ public class PerishablePunchersMain
 			// fireBall explosion thing
 			if (fireBallX >= fireBall2X && fireBallX <= fireBall2X + 256)// colliding
 			{
-				if (fireBallX != 0 && fireBallCollisionOnce)
+				if (fireBallX != 0 && fireBallCollisionOnce && p1CanFireBall && p2CanFireBall)
 				{
+					p1CanFireBall = false;
+					p2CanFireBall = false;
 					if (gfxType.equals("HD"))
 					{
 						renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
-						// Sound.play("Explosion.wav");
 						AL_Explosion.execute();
 					} else if (gfxType.equals("8Bit"))
 					{
 						renderTex(explosion, fireBallX - 128, fireBallY - 168);
-						// Sound.play("Explosion.wav");
 						AL_Explosion.execute();
 					}
 					notDoneP1 = false;
@@ -1487,7 +1523,6 @@ public class PerishablePunchersMain
 			finishingMoveArrow();
 			if (playSoundOnce)
 			{
-				// Sound.play("FinishIt.wav");
 				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
@@ -1515,7 +1550,6 @@ public class PerishablePunchersMain
 			finishingMoveWASD();
 			if (playSoundOnce)
 			{
-				// Sound.play("FinishIt.wav");
 				AL_FinishIt.execute();
 				playSoundOnce = false;
 			}
@@ -1611,20 +1645,6 @@ public class PerishablePunchersMain
 		{
 			fireBall2X = p2.getX();
 		}
-
-		// if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) &&
-		// gfxType.equals("8Bit"))
-		// {
-		// renderFireBallP2 = true;
-		// } else if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) &&
-		// gfxType.equals("HD"))
-		// {
-		// renderFireBallP2 = true;
-		// } else
-		// {
-		// renderFireBallP2 = false;
-		// }
-
 		inputSP();
 
 		if (notDoneP1 && notDoneP2)
@@ -1674,11 +1694,11 @@ public class PerishablePunchersMain
 
 	private void reset()
 	{
-		p1.setHealth(100);
+		p1.setHealth(p1.getMaxHealth());
 		p1.setX(120);
 		p1.setY(100);
 
-		p2.setHealth(100);
+		p2.setHealth(p2.getMaxHealth());
 		p2.setX(WIDTH - 120 - 256);
 		p2.setY(100);
 
@@ -1689,8 +1709,12 @@ public class PerishablePunchersMain
 		playDieSound = false;
 		p1CanFireBall = true;
 		p2CanFireBall = true;
+		playHaduken1Once = true;
+		playHaduken2Once = true;
 		notDoneP1 = false;
 		fireBallCollisionOnce = true;
+		playFlawlessSound = true;
+		playFlawlessSoundOnce = true;
 	}
 
 	private void menu()
@@ -1704,10 +1728,9 @@ public class PerishablePunchersMain
 			beginning = false;
 			gameState = 0;
 			player1Tex = 1;
-			player2Tex = 2;
+			player2Tex = 5;
 			map = 1;
 			gameMode = 0;
-			// Sound.play("Gong.wav");
 			AL_Gong.execute();
 
 		}
@@ -1807,7 +1830,6 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfx8Bit, 0, 0);
 					gfxType = "8Bit";
-					// Sound.play("Gong.wav");
 					AL_Gong.execute();
 
 					Display.update();
@@ -1827,7 +1849,6 @@ public class PerishablePunchersMain
 				{
 					renderTex(gfxHD, 0, 0);
 					gfxType = "HD";
-					// Sound.play("Gong.wav");
 					AL_Gong.execute();
 					Display.update();
 					try
@@ -2336,6 +2357,8 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+			shield = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Shield.png"));
+
 			diff = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Diff.png"));
 
 			easy = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Easy.png"));
@@ -2578,10 +2601,12 @@ public class PerishablePunchersMain
 		playHaduken1Once = true;
 		playHaduken2Once = true;
 		playFlawlessSound = true;
+		playFlawlessSoundOnce = true;
+		isP1Blocking = false;
+		isP2Blocking = false;
 
 		clickCount = 0;
 		clickCountMaps = 0;
-		// punchSound = new AL_Sound("Punch.wav");
 		try
 		{
 			AL.create();
@@ -2612,14 +2637,33 @@ public class PerishablePunchersMain
 			close = false;
 			while (close == false)
 			{
+				if (isP1Blocking)
+				{
+					p1Tiq++;
+				} else
+				{
+					p1Tiq = 0;
+				}
+				if (isP2Blocking)
+				{
+					p2Tiq++;
+				} else
+				{
+					p2Tiq = 0;
+				}
 				// p1 fireball
 				if (renderFireBallP1 && p1CanFireBall)
 				{
 					notDoneP1 = true;
 					if (playHaduken1Once && p1CanFireBall)
 					{
-						// Sound.play("Haduken.wav");
-						AL_Haduken.execute();
+						if (player1Tex != 5)
+						{
+							AL_Haduken.execute();
+						} else
+						{
+							AL_Scream.execute();
+						}
 						playHaduken1Once = false;
 					}
 				}
@@ -2630,8 +2674,14 @@ public class PerishablePunchersMain
 						fireBallX += 35;
 					} else if (fireBallX >= p2.getX() && notDoneP1)
 					{
-						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						// Sound.play("Explosion.wav");
+						if (!isP2Blocking)
+						{
+							p2.setHealth(p2.getHealth() - randomInt(20, 35));
+						} else
+						{
+							p2.setHealth(p2.getHealth() - randomInt(5, 20));
+							isP2Blocking = false;
+						}
 						AL_Explosion.execute();
 						playHaduken1Once = true;
 						p1CanFireBall = false;
@@ -2648,8 +2698,15 @@ public class PerishablePunchersMain
 						fireBallX -= 35;
 					} else if (fireBallX <= p2.getX() && notDoneP1)
 					{
-						p2.setHealth(p2.getHealth() - randomInt(20, 35));
-						// Sound.play("Explosion.wav");
+						if (!isP2Blocking)
+						{
+							p2.setHealth(p2.getHealth() - randomInt(20, 35));
+						} else
+						{
+							p2.setHealth(p2.getHealth() - randomInt(5, 20));
+							isP2Blocking = false;
+						}
+						AL_Explosion.execute();
 						playHaduken1Once = true;
 						p1CanFireBall = false;
 						notDoneP1 = false;
@@ -2665,8 +2722,13 @@ public class PerishablePunchersMain
 					notDoneP2 = true;
 					if (playHaduken2Once && p2CanFireBall)
 					{
-						// Sound.play("Haduken.wav");
-						AL_Haduken.execute();
+						if (player2Tex != 5)
+						{
+							AL_Haduken.execute();
+						} else
+						{
+							AL_Scream.execute();
+						}
 						playHaduken2Once = false;
 					}
 				}
@@ -2678,8 +2740,14 @@ public class PerishablePunchersMain
 						fireBall2X -= 35;
 					} else if (fireBall2X <= p1.getX() && notDoneP2)
 					{
-						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						// Sound.play("Explosion.wav");
+						if (!isP1Blocking)
+						{
+							p1.setHealth(p1.getHealth() - randomInt(20, 35));
+						} else
+						{
+							p1.setHealth(p1.getHealth() - randomInt(5, 20));
+							isP1Blocking = false;
+						}
 						AL_Explosion.execute();
 						playHaduken2Once = true;
 						p2CanFireBall = false;
@@ -2695,8 +2763,14 @@ public class PerishablePunchersMain
 						fireBall2X += 35;
 					} else if (fireBall2X >= p1.getX() && notDoneP2)
 					{
-						p1.setHealth(p1.getHealth() - randomInt(20, 35));
-						// Sound.play("Explosion.wav");
+						if (!isP1Blocking)
+						{
+							p1.setHealth(p1.getHealth() - randomInt(20, 35));
+						} else
+						{
+							p1.setHealth(p1.getHealth() - randomInt(5, 20));
+							isP1Blocking = false;
+						}
 						AL_Explosion.execute();
 						playHaduken2Once = true;
 						p2CanFireBall = false;
@@ -2732,25 +2806,16 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					// Sound.play("ItDied.wav");
 					AL_ItDied.execute();
 					playSound2Once = false;
 					playDieSound = false;
 				}
-				if (oneDied && p1.getHealth() == p1.getMaxHealth() && playFlawlessSound)
+				if (p1.getHealth() == p1.getMaxHealth() || p2.getHealth() == p2.getMaxHealth())
 				{
-					try
-					{
-						Thread.sleep(1200);
-					} catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-					// Sound.play("UnscathedConquest.wav");
-					AL_UC.execute();
-					playFlawlessSound = false;
+					playFlawlessSound = true;
 				}
-				if (oneDied && p2.getHealth() == p2.getMaxHealth() && playFlawlessSound)
+
+				if (oneDied && p1.getHealth() == p1.getMaxHealth() && playFlawlessSound && playFlawlessSoundOnce)
 				{
 					try
 					{
@@ -2759,9 +2824,22 @@ public class PerishablePunchersMain
 					{
 						e.printStackTrace();
 					}
-					// Sound.play("UnscathedConquest.wav");
 					AL_UC.execute();
 					playFlawlessSound = false;
+					playFlawlessSoundOnce = false;
+				}
+				if (oneDied && p2.getHealth() == p2.getMaxHealth() && playFlawlessSound && playFlawlessSoundOnce)
+				{
+					try
+					{
+						Thread.sleep(1200);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					AL_UC.execute();
+					playFlawlessSound = false;
+					playFlawlessSoundOnce = false;
 				}
 			}
 			AL.destroy();
