@@ -52,9 +52,9 @@ public class PerishablePunchersMain
 	private boolean renderP1Shield, renderP2Shield, isP1Blocking, isP2Blocking, playFlawlessSoundOnce, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound,
 			playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
 	private static long lastFrame;
-	private Texture shield, dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD, sewerBG,
-			sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, menuPlay, menuQuit, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped,
-			player1Kunch, player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
+	private Texture controls, shield, dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD,
+			sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
+			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
 			player2Health55, player2Health40, player2Health25, player2Health10, player2HealthFin, player2Health0, player1HD, player1WalkHD, player1FlippedHD, player1KunchHD, player2HD, player2WalkHD, player2FlippedHD, player2KunchHD, player3,
 			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
 			explosionHD, sp, mp, spmp;
@@ -77,11 +77,11 @@ public class PerishablePunchersMain
 	{
 		if (oneToFinish)
 		{
-			renderTex(FinishIt, WIDTH / 2 - 240, 64);
+			texRender(FinishIt, WIDTH / 2 - 240, 64);
 
 		} else if (oneToFinish2)
 		{
-			renderTex(FinishIt, WIDTH / 2 - 240, 64);
+			texRender(FinishIt, WIDTH / 2 - 240, 64);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class PerishablePunchersMain
 	{
 		if (oneDied)
 		{
-			renderTex(itDied, WIDTH / 2 - 260, 64);
+			texRender(itDied, WIDTH / 2 - 260, 64);
 
 		}
 	}
@@ -100,31 +100,31 @@ public class PerishablePunchersMain
 
 		if (health > 85)
 		{
-			renderTex(player1HealthFull, 0, 0);
+			texRender(player1HealthFull, 0, 0);
 		} else if (health > 70)
 		{
-			renderTex(player1Health85, 0, 0);
+			texRender(player1Health85, 0, 0);
 		} else if (health > 55)
 		{
-			renderTex(player1Health70, 0, 0);
+			texRender(player1Health70, 0, 0);
 		} else if (health > 40)
 		{
-			renderTex(player1Health55, 0, 0);
+			texRender(player1Health55, 0, 0);
 		} else if (health > 25)
 		{
-			renderTex(player1Health40, 0, 0);
+			texRender(player1Health40, 0, 0);
 		} else if (health > 10)
 		{
-			renderTex(player1Health25, 0, 0);
+			texRender(player1Health25, 0, 0);
 		} else if (health > 5)
 		{
-			renderTex(player1Health10, 0, 0);
+			texRender(player1Health10, 0, 0);
 		} else if (health < 6 && health > 2)
 		{
-			renderTex(player1HealthFin, 0, 0);
+			texRender(player1HealthFin, 0, 0);
 		} else
 		{
-			renderTex(player1Health0, 0, 0);
+			texRender(player1Health0, 0, 0);
 		}
 	}
 
@@ -133,36 +133,36 @@ public class PerishablePunchersMain
 		int health = p2.getHealth();
 		if (health > 85)
 		{
-			renderTex(player2HealthFull, 640, 0);
+			texRender(player2HealthFull, 640, 0);
 		} else if (health > 70)
 		{
-			renderTex(player2Health85, 640, 0);
+			texRender(player2Health85, 640, 0);
 		} else if (health > 55)
 		{
-			renderTex(player2Health70, 640, 0);
+			texRender(player2Health70, 640, 0);
 		} else if (health > 40)
 		{
-			renderTex(player2Health55, 640, 0);
+			texRender(player2Health55, 640, 0);
 		} else if (health > 25)
 		{
-			renderTex(player2Health40, 640, 0);
+			texRender(player2Health40, 640, 0);
 		} else if (health > 10)
 		{
-			renderTex(player2Health25, 640, 0);
+			texRender(player2Health25, 640, 0);
 		} else if (health > 5)
 		{
-			renderTex(player2Health10, 640, 0);
+			texRender(player2Health10, 640, 0);
 		} else if (health < 6 && health > 2)
 		{
-			renderTex(player2HealthFin, 640, 0);
+			texRender(player2HealthFin, 640, 0);
 		} else if (health < 3)
 		{
-			renderTex(player2Health0, 640, 0);
+			texRender(player2Health0, 640, 0);
 		}
 
 	}
 
-	private void renderTex(Texture tex, int x, int y)
+	private void texRender(Texture tex, int x, int y)
 	{
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
@@ -192,16 +192,16 @@ public class PerishablePunchersMain
 		{
 			if (map == 1)
 			{
-				renderTex(parkBG, 0, 0);
+				texRender(parkBG, 0, 0);
 			} else if (map == 2)
 			{
-				renderTex(roofBG, 0, 0);
+				texRender(roofBG, 0, 0);
 			} else if (map == 3)
 			{
-				renderTex(officeBG, 0, 0);
+				texRender(officeBG, 0, 0);
 			} else if (map == 4)
 			{
-				renderTex(sewerBG, 0, 0);
+				texRender(sewerBG, 0, 0);
 			}
 
 			renderHealthLeft();
@@ -212,16 +212,16 @@ public class PerishablePunchersMain
 		{
 			if (map == 1)
 			{
-				renderTex(parkBGHD, 0, 0);
+				texRender(parkBGHD, 0, 0);
 			} else if (map == 2)
 			{
-				renderTex(roofBGHD, 0, 0);
+				texRender(roofBGHD, 0, 0);
 			} else if (map == 3)
 			{
-				renderTex(officeBGHD, 0, 0);
+				texRender(officeBGHD, 0, 0);
 			} else if (map == 4)
 			{
-				renderTex(sewerBGHD, 0, 0);
+				texRender(sewerBGHD, 0, 0);
 			}
 
 			renderHealthLeft();
@@ -404,7 +404,7 @@ public class PerishablePunchersMain
 		}
 		if (p1Tiq < 75 && renderP1Shield)
 		{
-			renderTex(shield, p1.getX(), (int) p1.getY());
+			texRender(shield, p1.getX(), (int) p1.getY());
 			isP1Blocking = true;
 		} else
 		{
@@ -420,7 +420,7 @@ public class PerishablePunchersMain
 		}
 		if (p2Tiq < 75 && renderP2Shield)
 		{
-			renderTex(shield, p2.getX(), (int) p2.getY());
+			texRender(shield, p2.getX(), (int) p2.getY());
 			isP2Blocking = true;
 		} else
 		{
@@ -1195,19 +1195,19 @@ public class PerishablePunchersMain
 				if (r1 >= dmg)
 				{
 					p1.setHealth(p1.getHealth() - 7);
-					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
+					texRender(player2Kunch, p2.getX(), (int) p2.getY());
 					AL_Punch.execute();
 				} else if (r1 >= dmg - 5 && r1 < dmg)
 				{
-					renderTex(player2Kunch, p2.getX(), (int) p2.getY());
+					texRender(player2Kunch, p2.getX(), (int) p2.getY());
 					AL_Whoosh.execute();
 				} else
 				{
-					renderTex(p2Walk, p2.getX(), (int) p2.getY());
+					texRender(p2Walk, p2.getX(), (int) p2.getY());
 				}
 			} else
 			{
-				renderTex(p2Walk, p2.getX(), (int) p2.getY());
+				texRender(p2Walk, p2.getX(), (int) p2.getY());
 			}
 		} else
 		{
@@ -1243,7 +1243,7 @@ public class PerishablePunchersMain
 
 			} else
 			{
-				renderTex(p2Walk, p2.getX(), (int) p2.getY());
+				texRender(p2Walk, p2.getX(), (int) p2.getY());
 			}
 		}
 
@@ -1271,20 +1271,20 @@ public class PerishablePunchersMain
 			{
 				if (gfxType.equals("8Bit"))
 				{
-					renderTex(player2Flipped, p2.getX(), (int) p2.getY());
+					texRender(player2Flipped, p2.getX(), (int) p2.getY());
 				} else if (gfxType.equals("HD"))
 				{
-					renderTex(player2Flipped, p2.getX(), (int) p2.getY());
+					texRender(player2Flipped, p2.getX(), (int) p2.getY());
 				}
 				p2.moveLeft(p2.getX() - ((long) getDelta()));
 			} else if (p2.getX() <= p1.getX())
 			{
 				if (gfxType.equals("8Bit"))
 				{
-					renderTex(player2, p2.getX(), (int) p2.getY());
+					texRender(player2, p2.getX(), (int) p2.getY());
 				} else if (gfxType.equals("HD"))
 				{
-					renderTex(player2, p2.getX(), (int) p2.getY());
+					texRender(player2, p2.getX(), (int) p2.getY());
 				}
 				p2.moveRight(p2.getX() + ((long) getDelta()));
 			}
@@ -1325,7 +1325,7 @@ public class PerishablePunchersMain
 			oneToFinish = false;
 			oneDied = true;
 			renderItDied();
-			renderTex(restart, WIDTH / 2 - 256, 256);
+			texRender(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 			{
@@ -1352,7 +1352,7 @@ public class PerishablePunchersMain
 			oneToFinish2 = false;
 			oneDied = true;
 			renderItDied();
-			renderTex(restart, WIDTH / 2 - 256, 256);
+			texRender(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 			{
@@ -1385,19 +1385,19 @@ public class PerishablePunchersMain
 		{
 			if (fireBallType == 0)
 			{
-				renderTex(fireBall, fireBallX, fireBallY);
+				texRender(fireBall, fireBallX, fireBallY);
 			} else if (fireBallType == 1)
 			{
-				renderTex(fireBallFlipped, fireBallX, fireBallY);
+				texRender(fireBallFlipped, fireBallX, fireBallY);
 			}
 		} else if (notDoneP1 && gfxType.equals("HD") && p1CanFireBall)
 		{
 			if (fireBallType == 0)
 			{
-				renderTex(fireBallHD, fireBallX, fireBallY);
+				texRender(fireBallHD, fireBallX, fireBallY);
 			} else if (fireBallType == 1)
 			{
-				renderTex(fireBallHDFlipped, fireBallX, fireBallY);
+				texRender(fireBallHDFlipped, fireBallX, fireBallY);
 			}
 		} else
 		{
@@ -1420,19 +1420,19 @@ public class PerishablePunchersMain
 		{
 			if (fireBallType2 == 0)
 			{
-				renderTex(fireBall, fireBall2X, fireBall2Y);
+				texRender(fireBall, fireBall2X, fireBall2Y);
 			} else if (fireBallType2 == 1)
 			{
-				renderTex(fireBallFlipped, fireBall2X, fireBall2Y);
+				texRender(fireBallFlipped, fireBall2X, fireBall2Y);
 			}
 		} else if (notDoneP2 && gfxType.equals("HD") && p2CanFireBall)
 		{
 			if (fireBallType2 == 0)
 			{
-				renderTex(fireBallHD, fireBall2X, fireBall2Y);
+				texRender(fireBallHD, fireBall2X, fireBall2Y);
 			} else if (fireBallType2 == 1)
 			{
-				renderTex(fireBallHDFlipped, fireBall2X, fireBall2Y);
+				texRender(fireBallHDFlipped, fireBall2X, fireBall2Y);
 			}
 		} else
 		{
@@ -1463,11 +1463,11 @@ public class PerishablePunchersMain
 					p2CanFireBall = false;
 					if (gfxType.equals("HD"))
 					{
-						renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
+						texRender(explosionHD, fireBallX - 128, fireBallY - 168);
 						AL_Explosion.execute();
 					} else if (gfxType.equals("8Bit"))
 					{
-						renderTex(explosion, fireBallX - 128, fireBallY - 168);
+						texRender(explosion, fireBallX - 128, fireBallY - 168);
 						AL_Explosion.execute();
 					}
 					notDoneP1 = false;
@@ -1532,7 +1532,7 @@ public class PerishablePunchersMain
 			oneToFinish = false;
 			oneDied = true;
 			renderItDied();
-			renderTex(restart, WIDTH / 2 - 256, 256);
+			texRender(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 			{
@@ -1559,7 +1559,7 @@ public class PerishablePunchersMain
 			oneToFinish2 = false;
 			oneDied = true;
 			renderItDied();
-			renderTex(restart, WIDTH / 2 - 256, 256);
+			texRender(restart, WIDTH / 2 - 256, 256);
 			playDieSound = true;
 			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 			{
@@ -1592,19 +1592,19 @@ public class PerishablePunchersMain
 		{
 			if (fireBallType == 0)
 			{
-				renderTex(fireBall, fireBallX, fireBallY);
+				texRender(fireBall, fireBallX, fireBallY);
 			} else if (fireBallType == 1)
 			{
-				renderTex(fireBallFlipped, fireBallX, fireBallY);
+				texRender(fireBallFlipped, fireBallX, fireBallY);
 			}
 		} else if (notDoneP1 && gfxType.equals("HD") && p1CanFireBall)
 		{
 			if (fireBallType == 0)
 			{
-				renderTex(fireBallHD, fireBallX, fireBallY);
+				texRender(fireBallHD, fireBallX, fireBallY);
 			} else if (fireBallType == 1)
 			{
-				renderTex(fireBallHDFlipped, fireBallX, fireBallY);
+				texRender(fireBallHDFlipped, fireBallX, fireBallY);
 			}
 		} else
 		{
@@ -1627,19 +1627,19 @@ public class PerishablePunchersMain
 		{
 			if (fireBallType2 == 0)
 			{
-				renderTex(fireBall, fireBall2X, fireBall2Y);
+				texRender(fireBall, fireBall2X, fireBall2Y);
 			} else if (fireBallType2 == 1)
 			{
-				renderTex(fireBallFlipped, fireBall2X, fireBall2Y);
+				texRender(fireBallFlipped, fireBall2X, fireBall2Y);
 			}
 		} else if (notDoneP2 && gfxType.equals("HD") && p2CanFireBall)
 		{
 			if (fireBallType2 == 0)
 			{
-				renderTex(fireBallHD, fireBall2X, fireBall2Y);
+				texRender(fireBallHD, fireBall2X, fireBall2Y);
 			} else if (fireBallType2 == 1)
 			{
-				renderTex(fireBallHDFlipped, fireBall2X, fireBall2Y);
+				texRender(fireBallHDFlipped, fireBall2X, fireBall2Y);
 			}
 		} else
 		{
@@ -1657,10 +1657,10 @@ public class PerishablePunchersMain
 					System.out.println("FIREBALLS TOUCHING");
 					if (gfxType.equals("HD"))
 					{
-						renderTex(explosionHD, fireBallX - 128, fireBallY - 168);
+						texRender(explosionHD, fireBallX - 128, fireBallY - 168);
 					} else if (gfxType.equals("8Bit"))
 					{
-						renderTex(explosion, fireBallX - 128, fireBallY - 168);
+						texRender(explosion, fireBallX - 128, fireBallY - 168);
 					}
 					notDoneP1 = false;
 					notDoneP2 = false;
@@ -1719,7 +1719,7 @@ public class PerishablePunchersMain
 
 	private void menu()
 	{
-		renderTex(menu, 0, 0);
+		texRender(menu, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN))
@@ -1734,18 +1734,17 @@ public class PerishablePunchersMain
 			AL_Gong.execute();
 
 		}
-
 		if (Mouse.isButtonDown(0))
 		{
 			if (x >= 400 && x <= 875)
 			{
 				if (y <= 545 && y >= 390)
 				{
-					renderTex(menuPlay, 0, 0);
-					Display.update();
+					// texRender(menuPlay, 0, 0);
+					// Display.update();
 					try
 					{
-						Thread.sleep(250);
+						Thread.sleep(100);
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
@@ -1762,20 +1761,34 @@ public class PerishablePunchersMain
 				}
 			}
 
-			if (x >= 480 && x <= 800)
+			if (x >= 480 && x <= 800)// conrols
 			{
 				if (y >= 225 && y <= 330)
 				{
-					renderTex(menuQuit, 0, 0);
-					Display.update();
 					try
 					{
-						Thread.sleep(250);
+						Thread.sleep(100);
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					gameState = 7;
+				}
+			}
+
+			if (x >= 480 && x <= 800)
+			{
+				if (y >= 70 && y <= 170)
+				{
+					try
+					{
+						Thread.sleep(100);
 					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
 					}
 					close = true;
+					AL.destroy();
 					Display.destroy();
 					System.exit(0);
 				}
@@ -1801,7 +1814,7 @@ public class PerishablePunchersMain
 
 	private void gfx()
 	{
-		renderTex(gfx, 0, 0);
+		texRender(gfx, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
@@ -1828,7 +1841,7 @@ public class PerishablePunchersMain
 			{
 				if (y <= 540 && y >= 380)
 				{
-					renderTex(gfx8Bit, 0, 0);
+					texRender(gfx8Bit, 0, 0);
 					gfxType = "8Bit";
 					AL_Gong.execute();
 
@@ -1847,7 +1860,7 @@ public class PerishablePunchersMain
 			{
 				if (y >= 108 && y <= 270)
 				{
-					renderTex(gfxHD, 0, 0);
+					texRender(gfxHD, 0, 0);
 					gfxType = "HD";
 					AL_Gong.execute();
 					Display.update();
@@ -1866,7 +1879,7 @@ public class PerishablePunchersMain
 
 	private void charSelect()
 	{
-		renderTex(charPick, 0, 0);
+		texRender(charPick, 0, 0);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 		{
@@ -2089,7 +2102,7 @@ public class PerishablePunchersMain
 		{
 			if (y >= 720 - 185)
 			{
-				renderTex(dargonHead, 0, 0);
+				texRender(dargonHead, 0, 0);
 			}
 		}
 	}
@@ -2119,12 +2132,24 @@ public class PerishablePunchersMain
 		case 6:
 			difficulty();
 			break;
+		case 7:
+			controlViewer();
+			break;
+		}
+	}
+
+	private void controlViewer()
+	{
+		texRender(controls, 0, 0);
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		{
+			gameState = 1;
 		}
 	}
 
 	private void difficulty()
 	{
-		renderTex(diff, 0, 0);
+		texRender(diff, 0, 0);
 
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
@@ -2135,7 +2160,7 @@ public class PerishablePunchersMain
 			{
 				if (y <= 575 && y >= 415)
 				{
-					renderTex(easy, 0, 0);
+					texRender(easy, 0, 0);
 					gameMode = 1;
 					hardness = 1;
 					Display.update();
@@ -2154,7 +2179,7 @@ public class PerishablePunchersMain
 			{
 				if (y >= 240 && y <= 400)
 				{
-					renderTex(medium, 0, 0);
+					texRender(medium, 0, 0);
 					gameMode = 1;
 					hardness = 2;
 					Display.update();
@@ -2172,7 +2197,7 @@ public class PerishablePunchersMain
 			{
 				if (y <= 225 && y >= 65)
 				{
-					renderTex(hard, 0, 0);
+					texRender(hard, 0, 0);
 					gameMode = 1;
 					hardness = 3;
 					Display.update();
@@ -2191,7 +2216,7 @@ public class PerishablePunchersMain
 
 	private void gameModeChooser()
 	{
-		renderTex(spmp, 0, 0);
+		texRender(spmp, 0, 0);
 
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
@@ -2208,7 +2233,7 @@ public class PerishablePunchersMain
 			{
 				if (y <= 545 && y >= 390)
 				{
-					renderTex(sp, 0, 0);
+					texRender(sp, 0, 0);
 					gameMode = 1;
 					Display.update();
 					try
@@ -2226,7 +2251,7 @@ public class PerishablePunchersMain
 			{
 				if (y >= 105 && y <= 270)
 				{
-					renderTex(mp, 0, 0);
+					texRender(mp, 0, 0);
 					gameMode = 0;
 					Display.update();
 					try
@@ -2244,7 +2269,7 @@ public class PerishablePunchersMain
 
 	private void maps()
 	{
-		renderTex(maps, 0, 0);
+		texRender(maps, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
 		int y = Mouse.getY(); // will return the Y coordinate on the Display.
 
@@ -2357,6 +2382,8 @@ public class PerishablePunchersMain
 		try
 		{
 			// general things
+			controls = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
+
 			shield = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Shield.png"));
 
 			diff = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Diff.png"));
@@ -2416,10 +2443,6 @@ public class PerishablePunchersMain
 			FinishIt = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/FinishIt.png"));
 
 			menu = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Menu.png"));
-
-			menuPlay = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/MenuPlay.png"));
-
-			menuQuit = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/MenuQuit.png"));
 
 			charPick = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/CharacterSelection.png"));
 
@@ -2576,8 +2599,10 @@ public class PerishablePunchersMain
 		initTexs();
 
 		// create objects here
-		p1 = new Player(120, 100, 1);
-		p2 = new Player(WIDTH - 120 - 256, 100, 1);
+		int speed = 1;
+		int health = 100;
+		p1 = new Player(120, 100, speed, health);
+		p2 = new Player(WIDTH - 120 - 256, 100, speed, health);
 
 		// init vars
 		lastFrame = getTime();
@@ -2842,7 +2867,6 @@ public class PerishablePunchersMain
 					playFlawlessSoundOnce = false;
 				}
 			}
-			AL.destroy();
 		}
 	};
 }

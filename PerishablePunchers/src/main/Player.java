@@ -35,18 +35,13 @@ public class Player
 	 * @param be
 	 * @param speed
 	 */
-	public Player(int ex, int wy, float speed)
+	public Player(int ex, int wy, float speed, int maxHealth)
 	{
 		this.x = ex;
 		this.y = wy;
 		this.speed = speed;
-		maxHealth = 100
-				
-				
-				
-				
-				;
-		setHealth(maxHealth);
+		this.maxHealth = maxHealth;
+		setHealth(this.maxHealth);
 	}
 
 	public int getMaxHealth()
