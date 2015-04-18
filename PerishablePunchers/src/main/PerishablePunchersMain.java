@@ -549,6 +549,7 @@ public class PerishablePunchersMain
 					}
 				}
 			}
+
 			// BELOW WILL CHECK FOR COMBOS
 
 			// keypresses
@@ -588,7 +589,22 @@ public class PerishablePunchersMain
 		}
 
 		p2AI(player2, p2Walk, player2Kunch, player2Flipped);
-
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_S))
+		{
+			isP1Blocking = true;
+			renderP1Shield = true;
+		}
+		if (p1Tiq < 75 && renderP1Shield)
+		{
+			texRender(shield, p1.getX(), (int) p1.getY());
+			isP1Blocking = true;
+		} else
+		{
+			p1Tiq = 0;
+			renderP1Shield = false;
+			isP1Blocking = false;
+		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 		{
 			gameState = 1;
