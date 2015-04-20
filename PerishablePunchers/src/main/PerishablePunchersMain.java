@@ -49,9 +49,10 @@ public class PerishablePunchersMain
 			fireBallType = 0, fireBallType2 = 0;
 	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
 	private String gfxType;
+	private static long lastFrame;
 	private boolean renderP1Shield, renderP2Shield, isP1Blocking, isP2Blocking, playFlawlessSoundOnce, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound,
 			playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
-	private static long lastFrame;
+
 	private Texture controls, shield, dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD,
 			sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
 			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
@@ -267,19 +268,19 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_R)
-			{
-				if (Keyboard.getEventKeyState())
-				{
-				} else
-				{
-					Display.destroy();
-					AL.destroy();
-					close = true;
-					new PerishablePunchersMain().init();
-					System.exit(0);
-				}
-			}
+			// if (Keyboard.getEventKey() == Keyboard.KEY_R)
+			// {
+			// if (Keyboard.getEventKeyState())
+			// {
+			// } else
+			// {
+			// Display.destroy();
+			// AL.destroy();
+			// close = true;
+			// new PerishablePunchersMain().init();
+			// System.exit(0);
+			// }
+			// }
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_W && p1CanHit)
 			{
@@ -463,19 +464,19 @@ public class PerishablePunchersMain
 					}
 				}
 			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_R)
-			{
-				if (Keyboard.getEventKeyState())
-				{
-				} else
-				{
-					Display.destroy();
-					AL.destroy();
-					close = true;
-					new PerishablePunchersMain().init();
-					System.exit(0);
-				}
-			}
+			// if (Keyboard.getEventKey() == Keyboard.KEY_R)
+			// {
+			// if (Keyboard.getEventKeyState())
+			// {
+			// } else
+			// {
+			// Display.destroy();
+			// AL.destroy();
+			// close = true;
+			// new PerishablePunchersMain().init();
+			// System.exit(0);
+			// }
+			// }
 
 			if (Keyboard.getEventKey() == Keyboard.KEY_W && p1CanHit)
 			{
@@ -589,7 +590,7 @@ public class PerishablePunchersMain
 		}
 
 		p2AI(player2, p2Walk, player2Kunch, player2Flipped);
-		
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Keyboard.isKeyDown(Keyboard.KEY_S))
 		{
 			isP1Blocking = true;
@@ -2393,13 +2394,15 @@ public class PerishablePunchersMain
 		close = true;
 	}
 
-	private void initTexs()
+	private boolean initTexs()
 	{
 		try
 		{
 			// general things
-			controls = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
-
+			
+			//controls = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
+			// This gets loaded during first init ^^^
+			
 			shield = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Shield.png"));
 
 			diff = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Diff.png"));
@@ -2594,7 +2597,10 @@ public class PerishablePunchersMain
 		} catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
+		return true;
+		
 	}
 
 	private void init()
@@ -2604,15 +2610,33 @@ public class PerishablePunchersMain
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.setTitle("Loading...");
 			Display.setInitialBackground(0, 0, 0);
-			Display.setVSyncEnabled(true);
 			Display.create();
+			try
+			{
+				controls = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			
 		} catch (LWJGLException e)
 		{
 			e.printStackTrace();
 			System.exit(0);
 		}
-
-		initTexs();
+		do
+		{
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
+			glMatrixMode(GL_MODELVIEW);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+			texRender(controls, 0, 0);
+			
+			Display.sync(60);
+			Display.update();// updates screen
+		}while(!initTexs());
 
 		// create objects here
 		int speed = 1;
@@ -2648,6 +2672,7 @@ public class PerishablePunchersMain
 
 		clickCount = 0;
 		clickCountMaps = 0;
+
 		try
 		{
 			AL.create();
@@ -2656,9 +2681,9 @@ public class PerishablePunchersMain
 			le.printStackTrace();
 			return;
 		}
+
 		Thread th1 = new Thread(run1);// multithreading
 		th1.start();
-
 		loop();
 
 	}
