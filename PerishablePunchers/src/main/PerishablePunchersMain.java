@@ -60,6 +60,8 @@ public class PerishablePunchersMain
 			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
 			explosionHD, sp, mp, spmp;
 
+	//TODO: add networking, do it the same way as the chat application
+	
 	private static long getTime()
 	{
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
@@ -79,7 +81,6 @@ public class PerishablePunchersMain
 		if (oneToFinish)
 		{
 			texRender(FinishIt, WIDTH / 2 - 240, 64);
-
 		} else if (oneToFinish2)
 		{
 			texRender(FinishIt, WIDTH / 2 - 240, 64);
@@ -91,7 +92,6 @@ public class PerishablePunchersMain
 		if (oneDied)
 		{
 			texRender(itDied, WIDTH / 2 - 260, 64);
-
 		}
 	}
 
