@@ -115,7 +115,7 @@ public class AL_Haduken
 	public static void execute()
 	{
 		// Initialize OpenAL and clear the error bit.
-		
+
 		AL10.alGetError();
 
 		// Load the wav data.
@@ -127,50 +127,5 @@ public class AL_Haduken
 
 		setListenerValues();
 		AL10.alSourcePlay(source.get(0));
-		//
-		// // Loop.
-		// System.out.println("OpenAL Tutorial 1 - Single Static Source");
-		// System.out.println("[Menu]");
-		// System.out.println("p - Play the sample.");
-		// System.out.println("s - Stop the sample.");
-		// System.out.println("h - Pause the sample.");
-		// System.out.println("q - Quit the program.");
-		// char c = ' ';
-		// Scanner stdin = new Scanner(System.in);
-		// while (c != 'q')
-		// {
-		// try
-		// {
-		// System.out.print("Input: ");
-		// c = (char) stdin.nextLine().charAt(0);
-		// } catch (Exception ex)
-		// {
-		// c = 'q';
-		// }
-		//
-		// switch (c)
-		// {
-		// // Pressing 'p' will begin playing the sample.
-		// case 'p':
-		// AL10.alSourcePlay(source.get(0));
-		// break;
-		//
-		// // Pressing 's' will stop the sample from playing.
-		// case 's':
-		// AL10.alSourceStop(source.get(0));
-		// break;
-		//
-		// // Pressing 'h' will pause the sample.
-		// case 'h':
-		// AL10.alSourcePause(source.get(0));
-		// break;
-		// }
-		// ;
-		// }
-		// Scanner s = new Scanner(System.in);
-		// String a = s.nextLine();
-		// killALData();
-		// AL.destroy();
-		// s.close();
 	}
 }

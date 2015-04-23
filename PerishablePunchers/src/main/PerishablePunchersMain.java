@@ -1,41 +1,16 @@
 package main;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
-import java.io.IOException;
+import java.io.*;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.openal.AL;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
+import org.lwjgl.*;
+import org.lwjgl.input.*;
+import org.lwjgl.openal.*;
+import org.lwjgl.opengl.*;
+import org.newdawn.slick.*;
+import org.newdawn.slick.opengl.*;
+import org.newdawn.slick.util.*;
 
 /**
  * @author ssebs/Charlse
@@ -44,15 +19,13 @@ import org.newdawn.slick.util.ResourceLoader;
 public class PerishablePunchersMain
 {
 	private final int WIDTH = 1280, HEIGHT = 720;
-	private Player p1, p2;
-	private int p1Tiq = 0, p2Tiq = 0, hardness, gameState = 1, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallX = 0, fireBallY = 512, fireBall2X = 0, fireBall2Y = 512, combo1WASDNum = 0, combo1ArrowNum = 0,
-			fireBallType = 0, fireBallType2 = 0;
-	private long oldTime = 0, newTime = 0, dTime, dTime2, oldTime2 = 0, newTime2 = 0;
-	private String gfxType;
+	private int p1Tiq, p2Tiq, difficultyChoice, gameState, gameMode, player1Tex, map, player2Tex, clickCount, clickCountMaps, fireBallType, fireBallType2, fireBallX, fireBallY, fireBall2X, fireBall2Y, combo1WASDNum, combo1ArrowNum;
 	private static long lastFrame;
+	private long oldTime, newTime, dTime, dTime2, oldTime2, newTime2;
+	private String gfxType;
 	private boolean renderP1Shield, renderP2Shield, isP1Blocking, isP2Blocking, playFlawlessSoundOnce, renderDot1, renderDot2, renderDot3, renderDot4, beginning, close, isP1Jumping, isP2Jumping, oneDied, oneToFinish, oneToFinish2, playFlawlessSound,
 			playDieSound, playSoundOnce, playSound2Once, playSound3Once, fireBallCollisionOnce, p1CanFireBall, p2CanFireBall, p1CanHit, p2CanHit, renderFireBallP1, renderFireBallP2, notDoneP1, notDoneP2, playHaduken1Once, playHaduken2Once;
-
+	private Player p1, p2;
 	private Texture controls, shield, dargonHead, dargon, dargonWalk, dargonFlipped, dargonKunch, dargonHD, dargonWalkHD, dargonFlippedHD, dargonKunchHD, diff, easy, medium, hard, parkBG, parkBGHD, maps, roofBG, roofBGHD, officeBG, officeBGHD,
 			sewerBG, sewerBGHD, fireBall, fireBallHD, fireBallFlipped, fireBallHDFlipped, charPick, gfx, gfx8Bit, gfxHD, restart, menu, itDied, FinishIt, player1, player2, player1Walk, player2Walk, player1Flipped, player2Flipped, player1Kunch,
 			player2Kunch, player1HealthFull, player1Health85, player1Health70, player1Health55, player1Health40, player1Health25, player1Health10, player1HealthFin, player1Health0, player2HealthFull, player2Health85, player2Health70,
@@ -60,14 +33,17 @@ public class PerishablePunchersMain
 			player3Walk, player3Flipped, player3Kunch, player4, player4Walk, player4Flipped, player4Kunch, player3HD, player3WalkHD, player3FlippedHD, player3KunchHD, player4HD, player4WalkHD, player4FlippedHD, player4KunchHD, explosion,
 			explosionHD, sp, mp, spmp;
 
-	//TODO: add networking, do it the same way as the chat application
-	
+	/**
+	 * @return Time
+	 */
 	private static long getTime()
 	{
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-
 	}
 
+	/**
+	 * @return Delta time between updates(redraw calls)
+	 */
 	private static double getDelta()
 	{
 		long currentTime = getTime();
@@ -76,6 +52,9 @@ public class PerishablePunchersMain
 		return delta;
 	}
 
+	/**
+	 * Render "Finish it" text
+	 */
 	private void renderFinishIt()
 	{
 		if (oneToFinish)
@@ -87,6 +66,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Render "It died" text
+	 */
 	private void renderItDied()
 	{
 		if (oneDied)
@@ -95,6 +77,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Render Left players health
+	 */
 	private void renderHealthLeft()
 	{
 		int health = p1.getHealth();
@@ -129,6 +114,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Render Right playyers Health
+	 */
 	private void renderHealthRight()
 	{
 		int health = p2.getHealth();
@@ -163,6 +151,13 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * Will render a QUAD with a Texture
+	 * 
+	 * @param tex
+	 * @param x
+	 * @param y
+	 */
 	private void texRender(Texture tex, int x, int y)
 	{
 		glEnable(GL_TEXTURE_2D);
@@ -185,6 +180,9 @@ public class PerishablePunchersMain
 		glDisable(GL_TEXTURE_2D);
 	}
 
+	/**
+	 * Rendering method.
+	 */
 	private void render()
 	{
 		glClearColor(0, 0, 0, 1);
@@ -230,7 +228,7 @@ public class PerishablePunchersMain
 			renderItDied();
 			renderFinishIt();
 		}
-		// render a square for health bar
+		// render a square to divide the health bar
 		glBegin(GL_QUADS);
 		GL11.glColor3f(0, 0, 0);
 		glVertex2f(WIDTH / 2 - 5, 34);
@@ -241,6 +239,18 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * Multiplayer Input Polling
+	 * 
+	 * @param player1
+	 * @param p1Walk
+	 * @param player1Kunch
+	 * @param player1Flipped
+	 * @param player2
+	 * @param p2Walk
+	 * @param player2Kunch
+	 * @param player2Flipped
+	 */
 	private void pollInput(Texture player1, Texture p1Walk, Texture player1Kunch, Texture player1Flipped, Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
 		long delta = (long) getDelta();
@@ -437,6 +447,18 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * Singleplayer Input Polling
+	 * 
+	 * @param player1
+	 * @param p1Walk
+	 * @param player1Kunch
+	 * @param player1Flipped
+	 * @param player2
+	 * @param p2Walk
+	 * @param player2Kunch
+	 * @param player2Flipped
+	 */
 	private void pollInputSP(Texture player1, Texture p1Walk, Texture player1Kunch, Texture player1Flipped, Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
 		long delta = (long) getDelta();
@@ -613,6 +635,9 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * First Combo for Player 1
+	 */
 	private void combo1WASD()
 	{
 		if (Keyboard.getEventKey() == Keyboard.KEY_W && p1CanHit)
@@ -662,6 +687,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * First Combo for Player 2
+	 */
 	private void combo1Arrow()
 	{
 		if (Keyboard.getEventKey() == Keyboard.KEY_UP && p2CanHit)
@@ -711,6 +739,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * @return true if Players are colliding
+	 */
 	private boolean colliding()
 	{
 		boolean ret = false;
@@ -728,6 +759,9 @@ public class PerishablePunchersMain
 		return ret;
 	}
 
+	/**
+	 * Finishing Move for Player 2
+	 */
 	private void finishingMoveArrow()
 	{
 		if (Keyboard.getEventKey() == Keyboard.KEY_DOWN && p2CanHit)
@@ -748,6 +782,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Finishing Move for Player 1
+	 */
 	private void finishingMoveWASD()
 	{
 		if (Keyboard.getEventKey() == Keyboard.KEY_S && p1CanHit)
@@ -768,17 +805,28 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Something happened when it wasn't supposed to, so this will stop the game
+	 */
 	private void crash()
 	{
 		System.out.println("ERROR: GAME CRASHED");
 		System.exit(1);
 	}
 
+	/**
+	 * @param min
+	 * @param max
+	 * @return random integer between the range specified
+	 */
 	private int randomInt(int min, int max)
 	{
 		return (int) (Math.random() * max) + min;
 	}
 
+	/**
+	 * Will call different pollInputs based on the players' Textures
+	 */
 	private void input()
 	{
 		// 1 n 1
@@ -997,6 +1045,10 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will call different pollInputs based on the players' Textures, but for
+	 * Singleplayer
+	 */
 	private void inputSP()
 	{
 		// 1 n 1
@@ -1187,16 +1239,24 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Generic AI Algorithm
+	 * 
+	 * @param player2
+	 * @param p2Walk
+	 * @param player2Kunch
+	 * @param player2Flipped
+	 */
 	private void p2AI(Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
 		int dmg = 0;
-		if (hardness == 1)
+		if (difficultyChoice == 1)
 		{
 			dmg = 97;
-		} else if (hardness == 2)
+		} else if (difficultyChoice == 2)
 		{
 			dmg = 95;
-		} else if (hardness == 3)
+		} else if (difficultyChoice == 3)
 		{
 			dmg = 80;
 		} else
@@ -1266,18 +1326,26 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * AI Algorithm that moves the AI
+	 * 
+	 * @param player2
+	 * @param p2Walk
+	 * @param player2Kunch
+	 * @param player2Flipped
+	 */
 	private void moveAI(Texture player2, Texture p2Walk, Texture player2Kunch, Texture player2Flipped)
 	{
 
 		if (!colliding())
 		{
-			if (hardness == 1)
+			if (difficultyChoice == 1)
 			{
 				p2.setSpeed(0.005f);
-			} else if (hardness == 2)
+			} else if (difficultyChoice == 2)
 			{
 				p2.setSpeed(0.01f);
-			} else if (hardness == 3)
+			} else if (difficultyChoice == 3)
 			{
 				p2.setSpeed(0.05f);
 			} else
@@ -1308,6 +1376,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Generic Gameplay method(Multiplayer)
+	 */
 	private void gamePlay()
 	{
 		if (p1.getHealth() < 6)
@@ -1515,6 +1586,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Generic Gameplay method(Singleplayer)
+	 */
 	private void gamePlaySP()
 	{
 		if (p1.getHealth() < 6)
@@ -1709,6 +1783,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will reset the variables needed to play so that you can have a rematch
+	 */
 	private void reset()
 	{
 		p1.setHealth(p1.getMaxHealth());
@@ -1734,6 +1811,9 @@ public class PerishablePunchersMain
 		playFlawlessSoundOnce = true;
 	}
 
+	/**
+	 * Will render the Menu and check to see if a button was pressed
+	 */
 	private void menu()
 	{
 		texRender(menu, 0, 0);
@@ -1813,6 +1893,10 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * First method being called when playing. This checks what game mode your
+	 * in and calls the appropriate methods
+	 */
 	private void play()
 	{
 		if (gameMode == 0)
@@ -1829,7 +1913,10 @@ public class PerishablePunchersMain
 		}
 	}
 
-	private void gfx()
+	/**
+	 * Graphics Page
+	 */
+	private void graphicsSelector()
 	{
 		texRender(gfx, 0, 0);
 		int x = Mouse.getX(); // will return the X coordinate on the Display.
@@ -1894,6 +1981,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Character selection page
+	 */
 	private void charSelect()
 	{
 		texRender(charPick, 0, 0);
@@ -2124,6 +2214,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will check gamestates. Useful for having a menu/pausing/etc
+	 */
 	private void gameStates()
 	{
 		switch (gameState)
@@ -2135,7 +2228,7 @@ public class PerishablePunchersMain
 			menu();
 			break;
 		case 2:
-			gfx();
+			graphicsSelector();
 			break;
 		case 3:
 			charSelect();
@@ -2155,6 +2248,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will render Controls page
+	 */
 	private void controlViewer()
 	{
 		texRender(controls, 0, 0);
@@ -2164,6 +2260,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Choose difficulty after singleplayer is clicked
+	 */
 	private void difficulty()
 	{
 		texRender(diff, 0, 0);
@@ -2179,7 +2278,7 @@ public class PerishablePunchersMain
 				{
 					texRender(easy, 0, 0);
 					gameMode = 1;
-					hardness = 1;
+					difficultyChoice = 1;
 					Display.update();
 					try
 					{
@@ -2198,7 +2297,7 @@ public class PerishablePunchersMain
 				{
 					texRender(medium, 0, 0);
 					gameMode = 1;
-					hardness = 2;
+					difficultyChoice = 2;
 					Display.update();
 					try
 					{
@@ -2216,7 +2315,7 @@ public class PerishablePunchersMain
 				{
 					texRender(hard, 0, 0);
 					gameMode = 1;
-					hardness = 3;
+					difficultyChoice = 3;
 					Display.update();
 					try
 					{
@@ -2231,6 +2330,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will let you choose Singleplayer or Multiplayer
+	 */
 	private void gameModeChooser()
 	{
 		texRender(spmp, 0, 0);
@@ -2284,6 +2386,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * Will let you choose the map you want to play on
+	 */
 	private void maps()
 	{
 		texRender(maps, 0, 0);
@@ -2373,6 +2478,9 @@ public class PerishablePunchersMain
 		}
 	}
 
+	/**
+	 * The main game loop
+	 */
 	private void loop()
 	{
 		while (!Display.isCloseRequested())
@@ -2394,15 +2502,21 @@ public class PerishablePunchersMain
 		close = true;
 	}
 
+	/**
+	 * Will load all Textures
+	 * 
+	 * @return if all textures are loaded.
+	 */
 	private boolean initTexs()
 	{
 		try
 		{
 			// general things
-			
-			//controls = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
+
+			// controls = TextureLoader.getTexture("PNG",
+			// ResourceLoader.getResourceAsStream("res/Other/Controls.png"));
 			// This gets loaded during first init ^^^
-			
+
 			shield = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Shield.png"));
 
 			diff = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/Other/Diff.png"));
@@ -2600,9 +2714,12 @@ public class PerishablePunchersMain
 			return false;
 		}
 		return true;
-		
+
 	}
 
+	/**
+	 * Will Initialize the game
+	 */
 	private void init()
 	{
 		try
@@ -2618,7 +2735,7 @@ public class PerishablePunchersMain
 			{
 				e.printStackTrace();
 			}
-			
+
 		} catch (LWJGLException e)
 		{
 			e.printStackTrace();
@@ -2631,12 +2748,12 @@ public class PerishablePunchersMain
 			glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
 			glMatrixMode(GL_MODELVIEW);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+
 			texRender(controls, 0, 0);
-			
+
 			Display.sync(60);
 			Display.update();// updates screen
-		}while(!initTexs());
+		} while (!initTexs());
 
 		// create objects here
 		int speed = 1;
@@ -2672,6 +2789,22 @@ public class PerishablePunchersMain
 
 		clickCount = 0;
 		clickCountMaps = 0;
+		p1Tiq = 0;
+		p2Tiq = 0;
+		gameState = 1;
+		fireBallX = 0;
+		fireBallY = 512;
+		fireBall2X = 0;
+		fireBall2Y = 512;
+		combo1WASDNum = 0;
+		combo1ArrowNum = 0;
+		fireBallType = 0;
+		fireBallType2 = 0;
+
+		oldTime = 0;
+		newTime = 0;
+		oldTime2 = 0;
+		newTime2 = 0;
 
 		try
 		{
@@ -2688,12 +2821,20 @@ public class PerishablePunchersMain
 
 	}
 
+	/**
+	 * Main method
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		PerishablePunchersMain game = new PerishablePunchersMain();
 		game.init();
 	}
 
+	/**
+	 * Second thread
+	 */
 	Runnable run1 = new Runnable()
 	{
 		@Override

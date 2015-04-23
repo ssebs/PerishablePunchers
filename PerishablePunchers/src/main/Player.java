@@ -44,13 +44,16 @@ public class Player
 		setHealth(this.maxHealth);
 	}
 
+	/**
+	 * @return maxHealth
+	 */
 	public int getMaxHealth()
 	{
 		return maxHealth;
 	}
 
 	/**
-	 * will render character
+	 * Will render character
 	 */
 	public void draw(Texture tex)
 	{
@@ -75,7 +78,7 @@ public class Player
 	}
 
 	/**
-	 * will make character fall to ground
+	 * Will make character fall to ground
 	 */
 
 	public void fall(long delta)
@@ -91,7 +94,7 @@ public class Player
 	}
 
 	/**
-	 * will make character jump
+	 * Will make character jump
 	 */
 	public void jump()
 	{
@@ -117,7 +120,7 @@ public class Player
 	}
 
 	/**
-	 * will move character left
+	 * Will move character left
 	 */
 	public void moveLeft(long delta)
 	{
@@ -128,7 +131,7 @@ public class Player
 	}
 
 	/**
-	 * will move character right
+	 * Will move character right
 	 */
 	public void moveRight(long delta)
 	{
@@ -138,6 +141,9 @@ public class Player
 		}
 	}
 
+	/**
+	 * @param speed
+	 */
 	public void setSpeed(float speed)
 	{
 		this.speed = speed;
@@ -160,7 +166,7 @@ public class Player
 	}
 
 	/**
-	 * @return
+	 * @return x Coord
 	 */
 	public int getX()
 	{
@@ -168,7 +174,7 @@ public class Player
 	}
 
 	/**
-	 * @return
+	 * @return y Coord
 	 */
 	public float getY()
 	{
@@ -176,7 +182,7 @@ public class Player
 	}
 
 	/**
-	 * @return
+	 * @return Width
 	 */
 	public int getW()
 	{
@@ -184,18 +190,24 @@ public class Player
 	}
 
 	/**
-	 * @return
+	 * @return Height
 	 */
 	public int getH()
 	{
 		return h;
 	}
 
+	/**
+	 * @return Health
+	 */
 	public int getHealth()
 	{
 		return health;
 	}
 
+	/**
+	 * @param health
+	 */
 	public void setHealth(int health)
 	{
 		this.health = health;
