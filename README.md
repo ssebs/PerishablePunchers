@@ -1,6 +1,13 @@
 # PerishablePunchers
 Mortal Kombat like Game written in Java
 
+## Requirements
+- Java 1.6+
+
+## Usage
+- Download `PerishablePunchers.jar` file
+- `$ java -jar PerishablePunchers.jar`
+
 Perishable Punchers Game Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *Game developed by ssebs and Charlse
